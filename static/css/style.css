@@ -1,0 +1,1726 @@
+/* Smart Grocery Tracker Enhanced Styles */
+
+/* Light Mode Variables (Default) */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+
+    /* Theme Variables */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 0.5rem;
+    --border-radius-lg: 1rem;
+
+    /* Interactive Colors */
+    --hover-bg: rgba(13, 110, 253, 0.1);
+    --active-bg: rgba(13, 110, 253, 0.2);
+    --focus-ring: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Enhanced Dark Mode Variables */
+[data-theme="dark"] {
+    --primary-color: #4dabf7;
+    --secondary-color: #868e96;
+    --success-color: #51cf66;
+    --warning-color: #ffd43b;
+    --danger-color: #ff6b6b;
+    --info-color: #74c0fc;
+    --light-color: #495057;
+    --dark-color: #f8f9fa;
+
+    /* GitHub Dark inspired theme */
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --text-muted: #6c757d;
+    --border-color: #30363d;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.4);
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.6);
+
+    /* Enhanced Dark Interactive Colors */
+    --hover-bg: rgba(77, 171, 247, 0.1);
+    --active-bg: rgba(77, 171, 247, 0.2);
+    --focus-ring: 0 0 0 0.25rem rgba(77, 171, 247, 0.25);
+}
+
+/* Global Styles */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: var(--transition);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Enhanced Theme Toggle Button - Fixed in Top Right Corner */
+.theme-toggle {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 9999 !important; /* Highest z-index to stay above everything */
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ff6347 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    width: 70px;
+    height: 35px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4),
+                0 0 0 0 rgba(255, 215, 0, 0.7);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.08) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.6),
+                0 0 0 8px rgba(255, 215, 0, 0.2),
+                0 0 30px rgba(255, 140, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.6);
+    animation: pulseGlow 2s infinite;
+}
+
+.theme-toggle:active {
+    transform: scale(0.95) rotate(-2deg);
+    transition: all 0.1s ease;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(255, 140, 0, 0.6),
+                    0 0 0 8px rgba(255, 215, 0, 0.2),
+                    0 0 30px rgba(255, 140, 0, 0.8);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(255, 140, 0, 0.8),
+                    0 0 0 12px rgba(255, 215, 0, 0.3),
+                    0 0 40px rgba(255, 140, 0, 1);
+    }
+}
+
+/* Theme toggle slider */
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 27px;
+    height: 27px;
+    background: radial-gradient(circle, #ffffff 0%, #f0f0f0 100%);
+    border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 3px rgba(255, 255, 255, 0.8);
+    z-index: 2;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle::before {
+    transform: translateX(35px);
+    background: radial-gradient(circle, #2c3e50 0%, #1a252f 100%);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5),
+                inset 0 1px 3px rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme toggle icons */
+.theme-toggle i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    z-index: 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Sun icon for light mode */
+[data-theme="light"] .theme-toggle i {
+    color: #ff6b35;
+    right: 10px;
+    animation: rotateSun 8s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(255, 107, 53, 0.8));
+}
+
+/* Moon icon for dark mode */
+[data-theme="dark"] .theme-toggle i {
+    color: #ffd700;
+    left: 10px;
+    animation: floatMoon 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
+}
+
+@keyframes rotateSun {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+@keyframes floatMoon {
+    0%, 100% { transform: translateY(-50%) translateX(0px); }
+    50% { transform: translateY(-50%) translateX(2px); }
+}
+
+/* Dark mode background for toggle */
+[data-theme="dark"] .theme-toggle {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 20px rgba(15, 52, 96, 0.6),
+                0 0 0 0 rgba(26, 26, 46, 0.8);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    transform: scale(1.08) rotate(-5deg);
+    box-shadow: 0 8px 25px rgba(15, 52, 96, 0.8),
+                0 0 0 8px rgba(26, 26, 46, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.6);
+    border-color: rgba(255, 215, 0, 0.4);
+    animation: pulseGlowDark 2s infinite;
+}
+
+@keyframes pulseGlowDark {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(15, 52, 96, 0.8),
+                    0 0 0 8px rgba(26, 26, 46, 0.3),
+                    0 0 30px rgba(255, 215, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(15, 52, 96, 1),
+                    0 0 0 12px rgba(26, 26, 46, 0.4),
+                    0 0 40px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* Responsive adjustments for theme toggle */
+@media (max-width: 768px) {
+    .theme-toggle {
+        top: 15px !important;
+        right: 15px !important;
+        width: 60px;
+        height: 30px;
+    }
+
+    .theme-toggle::before {
+        width: 22px;
+        height: 22px;
+        top: 4px;
+        left: 4px;
+    }
+
+    [data-theme="dark"] .theme-toggle::before {
+        transform: translateX(30px);
+    }
+
+    .theme-toggle i {
+        font-size: 12px;
+    }
+
+    [data-theme="light"] .theme-toggle i {
+        right: 8px;
+    }
+
+    [data-theme="dark"] .theme-toggle i {
+        left: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .theme-toggle {
+        top: 10px !important;
+        right: 10px !important;
+        width: 55px;
+        height: 28px;
+    }
+
+    .theme-toggle::before {
+        width: 20px;
+        height: 20px;
+        top: 4px;
+        left: 4px;
+    }
+
+    [data-theme="dark"] .theme-toggle::before {
+        transform: translateX(27px);
+    }
+
+    .theme-toggle i {
+        font-size: 11px;
+    }
+}
+
+/* Ensure theme toggle doesn't interfere with navbar on mobile */
+@media (max-width: 991.98px) {
+    .navbar-toggler {
+        margin-right: 80px; /* Space for enhanced theme toggle */
+    }
+}
+
+/* Add enhanced backdrop for better visibility */
+.theme-toggle::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50px;
+    z-index: -1;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.theme-toggle:hover::after {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Add sparkle effect for light mode */
+[data-theme="light"] .theme-toggle::after {
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 140, 0, 0.1) 50%, transparent 70%);
+}
+
+/* Add cosmic effect for dark mode */
+[data-theme="dark"] .theme-toggle::after {
+    background: radial-gradient(circle, rgba(26, 26, 46, 0.3) 0%, rgba(15, 52, 96, 0.2) 50%, transparent 70%);
+}
+
+/* Add transition effect when switching themes */
+.theme-toggle.switching {
+    animation: themeSwitch 0.6s ease;
+}
+
+@keyframes themeSwitch {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(90deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    75% { transform: scale(1.1) rotate(270deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+/* Theme switching animation */
+.theme-switching {
+    animation: themeSwitch 0.3s ease;
+}
+
+@keyframes themeSwitch {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* Enhanced Navigation */
+.navbar {
+    background-color: var(--bg-primary) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-primary) !important;
+    transition: var(--transition);
+}
+
+.navbar-brand:hover {
+    color: var(--primary-color) !important;
+    transform: scale(1.05);
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    color: var(--text-secondary) !important;
+    transition: var(--transition);
+    border-radius: var(--border-radius);
+    margin: 0 0.25rem;
+    padding: 0.5rem 1rem !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--primary-color) !important;
+    background-color: var(--hover-bg);
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link.active {
+    color: var(--primary-color) !important;
+    background-color: var(--active-bg);
+}
+
+/* Enhanced Cards */
+.card {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 1.25rem;
+}
+
+.card-body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 1.5rem;
+}
+
+/* Enhanced Buttons */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, var(--primary-color));
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Enhanced Forms */
+.form-control, .form-select {
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--bg-primary);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    box-shadow: var(--focus-ring);
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
+    color: var(--text-muted);
+}
+
+/* Enhanced Tables */
+.table {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+.table th {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Enhanced Alerts */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    color: #0c5460;
+}
+
+/* Grocery Item Cards */
+.grocery-item-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.grocery-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.grocery-item-card .card-title {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+/* Status Badges */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge.bg-expired {
+    background-color: var(--danger-color) !important;
+}
+
+.badge.bg-expiring-soon {
+    background-color: var(--warning-color) !important;
+    color: var(--dark-color) !important;
+}
+
+.badge.bg-fresh {
+    background-color: var(--success-color) !important;
+}
+
+/* Remove duplicate form styles - already defined above */
+
+/* Dashboard Stats Cards */
+.stats-card {
+    background: linear-gradient(135deg, var(--primary-color), #0b5ed7);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+}
+
+.stats-card .stats-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card .stats-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+/* Alerts */
+.alert {
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert-dismissible .btn-close {
+    padding: 0.75rem 1rem;
+}
+
+/* Loading States */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Suggestion Items */
+.suggestion-item {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: var(--light-color);
+    border-color: var(--primary-color) !important;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Ripple Effect */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Enhanced Interactive Elements */
+.interactive-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.interactive-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.interactive-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+
+
+/* Enhanced Navbar */
+.navbar {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1040; /* Ensure navbar is above other content */
+}
+
+/* Fix dropdown positioning - Force override all Bootstrap styles */
+.navbar .dropdown {
+    position: relative !important;
+}
+
+.navbar .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    inset: auto !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    min-width: 200px;
+    max-width: 300px;
+    width: auto !important;
+}
+
+.navbar .dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    inset: auto !important;
+}
+
+.navbar .dropdown-menu:not(.show) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Override any Popper.js or Bootstrap positioning */
+.navbar .dropdown-menu[data-popper-placement],
+.navbar .dropdown-menu[style*="position"],
+.navbar .dropdown-menu[style*="transform"],
+.navbar .dropdown-menu[style*="inset"] {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    inset: auto !important;
+}
+
+.navbar-nav .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::after,
+.navbar-nav .nav-link.active::after {
+    width: 80%;
+}
+
+/* Enhanced Dropdown Menu Styling */
+.navbar .dropdown-menu {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    margin-top: 8px;
+    z-index: 1080 !important; /* Highest z-index for navbar dropdowns */
+    position: absolute !important;
+    transform: translateY(0) !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar .dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) !important;
+}
+
+.navbar .dropdown-item {
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin: 3px 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.navbar .dropdown-item:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white !important;
+    transform: translateX(8px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+}
+
+.navbar .dropdown-item:active {
+    transform: translateX(6px) scale(0.98);
+}
+
+.navbar .dropdown-item i {
+    width: 22px;
+    text-align: center;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.navbar .dropdown-item:hover i {
+    transform: scale(1.2) rotate(5deg);
+    color: white;
+}
+
+/* Add subtle animation on dropdown item focus */
+.navbar .dropdown-item:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+/* Dark mode dropdown styling */
+[data-theme="dark"] .navbar .dropdown-menu {
+    background: rgba(33, 38, 45, 0.95);
+    border-color: var(--border-color);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .navbar .dropdown-item {
+    color: var(--text-primary);
+    border-color: transparent;
+}
+
+[data-theme="dark"] .navbar .dropdown-item:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.4);
+}
+
+[data-theme="dark"] .navbar .dropdown-item:focus {
+    background: rgba(var(--primary-rgb), 0.15);
+    outline-color: var(--primary-color);
+}
+
+/* Ensure dropdown appears above page content */
+.dropdown-menu {
+    z-index: 1070 !important;
+    position: absolute !important;
+}
+
+/* Navbar dropdowns get highest priority */
+.navbar .dropdown-menu {
+    z-index: 1080 !important;
+}
+
+/* SIMPLE DROPDOWN POSITIONING - BELOW BUTTONS */
+.navbar-nav .dropdown {
+    position: relative !important;
+}
+
+.navbar-nav .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: translateY(10px) !important;
+    margin: 0 !important;
+    min-width: 200px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: none !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 9999 !important;
+}
+
+.navbar-nav .dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(10px) !important;
+}
+
+/* Override ALL Bootstrap positioning */
+.navbar .dropdown-menu[data-bs-popper] {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    transform: translateY(10px) !important;
+    inset: unset !important;
+}
+
+
+
+/* Enhanced navbar hover effects */
+.navbar-nav .nav-link:hover {
+    color: var(--primary-color) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-nav .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+/* Smooth dropdown animation */
+.navbar .dropdown:hover .dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: dropdownFadeIn 0.3s ease;
+}
+
+/* Ensure dropdown positioning is consistent */
+.navbar-nav .dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+@keyframes dropdownFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%);
+    }
+}
+
+/* Enhanced dropdown item animations */
+.navbar .dropdown-item {
+    animation: slideInLeft 0.3s ease forwards;
+    opacity: 0;
+}
+
+.navbar .dropdown-menu.show .dropdown-item {
+    opacity: 1;
+}
+
+.navbar .dropdown-item:nth-child(1) { animation-delay: 0.1s; }
+.navbar .dropdown-item:nth-child(2) { animation-delay: 0.15s; }
+.navbar .dropdown-item:nth-child(3) { animation-delay: 0.2s; }
+.navbar .dropdown-item:nth-child(4) { animation-delay: 0.25s; }
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Add ripple effect to dropdown items */
+.navbar .dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.5s ease;
+    z-index: -1;
+}
+
+.navbar .dropdown-item:hover::before {
+    width: 100%;
+    left: 100%;
+}
+
+/* Enhanced visual feedback */
+.navbar .dropdown-item:hover {
+    cursor: pointer;
+    user-select: none;
+}
+
+.navbar .dropdown-item:active {
+    transform: translateX(6px) scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Prevent dropdown from being hidden behind other elements */
+.navbar-collapse {
+    z-index: 1050;
+}
+
+
+
+/* Enhanced responsive dropdown */
+@media (max-width: 991.98px) {
+    .navbar .dropdown-menu {
+        position: static !important;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        transform: none !important;
+        left: auto !important;
+        right: auto !important;
+    }
+
+    .navbar .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .navbar .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: none;
+    }
+}
+
+/* Enhanced Dark Mode Support */
+[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+[data-theme="dark"] .navbar {
+    background-color: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .navbar-brand,
+[data-theme="dark"] .nav-link {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: var(--bg-secondary);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .alert {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-footer {
+    border-top-color: var(--border-color);
+}
+
+[data-theme="dark"] .table {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .table th {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Enhanced scrollbar for dark mode */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Smooth transitions for all theme-aware elements */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Theme-aware text colors */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Footer dark mode */
+[data-theme="dark"] footer {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] footer h5,
+[data-theme="dark"] footer p {
+    color: var(--text-primary) !important;
+}
+
+/* Enhanced focus states for accessibility */
+[data-theme="dark"] .btn:focus,
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+/* COMPREHENSIVE LIGHT MODE OVERRIDES - Force pure white theme */
+[data-theme="light"] {
+    color-scheme: light;
+}
+
+/* Light mode body and main containers */
+[data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .container,
+[data-theme="light"] .container-fluid {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+/* Light mode navigation */
+[data-theme="light"] .navbar {
+    background-color: #ffffff !important;
+    border-bottom-color: #dee2e6 !important;
+}
+
+[data-theme="light"] .navbar-brand,
+[data-theme="light"] .nav-link {
+    color: #212529 !important;
+}
+
+[data-theme="light"] .nav-link:hover {
+    color: #0d6efd !important;
+    background-color: #f8f9fa !important;
+}
+
+/* Light mode cards and containers */
+[data-theme="light"] .card {
+    background-color: #ffffff !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .card-header {
+    background-color: #f8f9fa !important;
+    border-bottom-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .card-body {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+/* Light mode forms */
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select {
+    background-color: #ffffff !important;
+    border-color: #ced4da !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .form-control:focus,
+[data-theme="light"] .form-select:focus {
+    background-color: #ffffff !important;
+    border-color: #0d6efd !important;
+    color: #212529 !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+}
+
+[data-theme="light"] .form-label {
+    color: #212529 !important;
+}
+
+[data-theme="light"] .form-text {
+    color: #6c757d !important;
+}
+
+/* Light mode buttons */
+[data-theme="light"] .btn-outline-secondary {
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+    background-color: #ffffff !important;
+}
+
+[data-theme="light"] .btn-outline-secondary:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+/* Light mode dropdowns */
+[data-theme="light"] .dropdown-menu {
+    background-color: #ffffff !important;
+    border-color: #dee2e6 !important;
+}
+
+[data-theme="light"] .dropdown-item {
+    color: #212529 !important;
+}
+
+[data-theme="light"] .dropdown-item:hover {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+/* Light mode alerts */
+[data-theme="light"] .alert {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .alert-success {
+    background-color: #d1e7dd !important;
+    border-color: #badbcc !important;
+    color: #0f5132 !important;
+}
+
+[data-theme="light"] .alert-danger {
+    background-color: #f8d7da !important;
+    border-color: #f5c2c7 !important;
+    color: #842029 !important;
+}
+
+[data-theme="light"] .alert-warning {
+    background-color: #fff3cd !important;
+    border-color: #ffecb5 !important;
+    color: #664d03 !important;
+}
+
+[data-theme="light"] .alert-info {
+    background-color: #d1ecf1 !important;
+    border-color: #b6effb !important;
+    color: #055160 !important;
+}
+
+/* Light mode modals */
+[data-theme="light"] .modal-content {
+    background-color: #ffffff !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .modal-header {
+    background-color: #f8f9fa !important;
+    border-bottom-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .modal-footer {
+    background-color: #f8f9fa !important;
+    border-top-color: #dee2e6 !important;
+}
+
+/* Light mode tables */
+[data-theme="light"] .table {
+    color: #212529 !important;
+    background-color: #ffffff !important;
+}
+
+[data-theme="light"] .table th {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .table td {
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Light mode text colors */
+[data-theme="light"] .text-muted {
+    color: #6c757d !important;
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+    color: #212529 !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] div {
+    color: #212529 !important;
+}
+
+/* Light mode footer */
+[data-theme="light"] footer {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+
+[data-theme="light"] footer h5,
+[data-theme="light"] footer p {
+    color: #212529 !important;
+}
+
+/* Light mode enhanced elements from templates */
+[data-theme="light"] .page-header,
+[data-theme="light"] .page-header-home {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .sidebar-card,
+[data-theme="light"] .form-card,
+[data-theme="light"] .suggestions-card,
+[data-theme="light"] .grocery-item-card-enhanced {
+    background-color: #ffffff !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .form-section {
+    background-color: #ffffff !important;
+    border-color: #dee2e6 !important;
+}
+
+[data-theme="light"] .item-header,
+[data-theme="light"] .form-card-header,
+[data-theme="light"] .sidebar-header {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .item-body,
+[data-theme="light"] .filter-section {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .item-footer,
+[data-theme="light"] .action-buttons {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+/* Light mode input groups and enhanced controls */
+[data-theme="light"] .form-control-enhanced {
+    background-color: #ffffff !important;
+    border-color: #ced4da !important;
+    color: #212529 !important;
+}
+
+[data-theme="light"] .form-control-enhanced:focus {
+    background-color: #ffffff !important;
+    border-color: #0d6efd !important;
+    color: #212529 !important;
+}
+
+/* Light mode badges and status indicators */
+[data-theme="light"] .category-badge {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .quantity-display {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #0d6efd !important;
+}
+
+/* Light mode scrollbar */
+[data-theme="light"] ::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
+}
+
+
+
+
+
+/* Enhanced Form Controls */
+.form-control:focus,
+.form-select:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
+}
+
+/* Smooth Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px var(--shadow-color);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Loading States */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner-large {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .stats-card .stats-number {
+        font-size: 2rem;
+    }
+
+    .grocery-item-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+
+    .card {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+
+    .card-header {
+        background-color: #3d3d3d;
+        border-bottom-color: #4d4d4d;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: #3d3d3d;
+        border-color: #4d4d4d;
+        color: #ffffff;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #3d3d3d;
+        border-color: var(--primary-color);
+        color: #ffffff;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .btn,
+    .dropdown,
+    footer {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+
+    .grocery-item-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus indicators */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000000;
+    }
+
+    .btn {
+        border-width: 2px;
+    }
+
+    .badge {
+        border: 1px solid #000000;
+    }
+}

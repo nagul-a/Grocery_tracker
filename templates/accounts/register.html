@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .auth-card {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 20px;
+        box-shadow: var(--dropdown-shadow);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 540px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 25px 30px -5px rgba(0, 0, 0, 0.12),
+            0 15px 15px -5px rgba(0, 0, 0, 0.06),
+            0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-logo {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--nav-active), #1d4ed8);
+        color: white;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin: 0 auto 1rem;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .auth-subtitle {
+        color: var(--dropdown-item-text);
+        font-size: 0.9375rem;
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--dropdown-border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--nav-text);
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--nav-active);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background: var(--dropdown-item-active);
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--dropdown-border);
+    }
+
+    .auth-link {
+        color: var(--nav-active);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: color 0.2s ease;
+    }
+
+    .auth-link:hover {
+        color: var(--dropdown-item-text-hover);
+        text-decoration: none;
+    }
+
+    .alert {
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        border: 1px solid;
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.2);
+        color: #16a34a;
+    }
+
+    .help-text {
+        font-size: 0.8125rem;
+        color: var(--dropdown-item-text);
+        margin-top: 0.25rem;
+        opacity: 0.8;
+    }
+
+    .error-text {
+        color: #dc2626;
+        font-size: 0.8125rem;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 1rem;
+        }
+        
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="bi bi-basket2-fill"></i>
+            </div>
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join Smart Grocery Tracker and start managing your groceries intelligently</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="error-text">
+                            {% for error in form.first_name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="error-text">
+                            {% for error in form.last_name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.help_text %}
+                    <div class="help-text">{{ form.username.help_text }}</div>
+                {% endif %}
+                {% if form.username.errors %}
+                    <div class="error-text">
+                        {% for error in form.username.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error-text">
+                        {% for error in form.email.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.help_text %}
+                    <div class="help-text">{{ form.password1.help_text }}</div>
+                {% endif %}
+                {% if form.password1.errors %}
+                    <div class="error-text">
+                        {% for error in form.password1.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error-text">
+                        {% for error in form.password2.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p class="mb-0">
+                Already have an account? 
+                <a href="{% url 'accounts:login' %}" class="auth-link">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

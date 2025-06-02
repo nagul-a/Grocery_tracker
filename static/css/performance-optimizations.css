@@ -1,0 +1,276 @@
+/**
+ * Performance Optimizations for Smart Grocery Tracker
+ * Reduces reflows, repaints, and improves rendering performance
+ */
+
+/* GPU Acceleration for smooth animations */
+.card, .btn, .navbar, .dropdown-menu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Optimize transitions */
+* {
+    transition-duration: 0.2s !important;
+}
+
+/* Reduce expensive box-shadows */
+.card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-1px) translateZ(0);
+}
+
+/* Optimize button interactions */
+.btn {
+    will-change: transform;
+}
+
+.btn:hover {
+    transform: translateY(-1px) translateZ(0);
+}
+
+.btn:active {
+    transform: translateY(0) translateZ(0);
+}
+
+/* Smooth scrolling optimization */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Optimize dropdown animations */
+.dropdown-menu {
+    transition: opacity 0.15s ease, transform 0.15s ease !important;
+    transform-origin: top center;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+}
+
+.dropdown-menu:not(.show) {
+    opacity: 0;
+    transform: scale(0.95) translateZ(0);
+}
+
+/* Optimize theme transitions */
+body {
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* Reduce layout thrashing */
+.container-fluid, .container {
+    contain: layout style;
+}
+
+/* Optimize image rendering */
+img {
+    image-rendering: optimizeSpeed;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+}
+
+/* Optimize text rendering */
+body, .card, .btn {
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce paint complexity */
+.navbar {
+    contain: layout style paint;
+}
+
+/* Optimize form elements */
+.form-control, .form-select {
+    will-change: border-color, box-shadow;
+}
+
+/* Optimize table rendering */
+.table {
+    table-layout: fixed;
+}
+
+/* Reduce reflow on hover states */
+.grocery-item-card-enhanced {
+    contain: layout style;
+}
+
+/* Optimize ripple effects */
+.ripple {
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* Optimize notification animations */
+.notification {
+    will-change: transform, opacity;
+    contain: layout style paint;
+}
+
+/* Optimize modal animations */
+.modal {
+    contain: layout style;
+}
+
+.modal-dialog {
+    will-change: transform;
+}
+
+/* Optimize loading states */
+.loading {
+    contain: layout style paint;
+}
+
+/* Optimize search results */
+#items-container {
+    contain: layout style;
+}
+
+/* Optimize dashboard charts */
+.chart-container {
+    contain: layout style paint;
+    will-change: contents;
+}
+
+/* Optimize sidebar */
+.sidebar {
+    contain: layout style paint;
+}
+
+/* Optimize footer */
+.footer {
+    contain: layout style paint;
+}
+
+/* Critical rendering optimizations */
+.critical-content {
+    contain: layout style paint;
+    will-change: contents;
+}
+
+/* Optimize animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px) translateZ(0); }
+    to { opacity: 1; transform: translateY(0) translateZ(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%) translateZ(0); }
+    to { transform: translateX(0) translateZ(0); }
+}
+
+/* Optimize theme switching */
+.theme-switching * {
+    transition: none !important;
+}
+
+/* Optimize mobile performance */
+@media (max-width: 768px) {
+    /* Reduce animations on mobile */
+    * {
+        transition-duration: 0.1s !important;
+    }
+    
+    /* Optimize touch interactions */
+    .btn, .card {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    /* Reduce box-shadows on mobile */
+    .card {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card:hover {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+}
+
+/* Optimize print styles */
+@media print {
+    * {
+        transition: none !important;
+        animation: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Optimize high DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .card, .btn {
+        transform: translateZ(0);
+    }
+}
+
+/* Optimize reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Optimize focus states */
+.btn:focus, .form-control:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Optimize loading spinners */
+.spinner {
+    will-change: transform;
+    contain: layout style paint;
+}
+
+/* Optimize badge animations */
+.badge {
+    will-change: transform;
+}
+
+/* Optimize progress bars */
+.progress {
+    contain: layout style paint;
+}
+
+.progress-bar {
+    will-change: width;
+}
+
+/* Optimize tooltip performance */
+.tooltip {
+    contain: layout style paint;
+    will-change: opacity, transform;
+}
+
+/* Optimize alert animations */
+.alert {
+    contain: layout style paint;
+}
+
+/* Optimize breadcrumb performance */
+.breadcrumb {
+    contain: layout style;
+}
+
+/* Optimize pagination */
+.pagination {
+    contain: layout style;
+}
+
+/* Final performance boost */
+.performance-optimized {
+    contain: layout style paint;
+    will-change: auto;
+    transform: translateZ(0);
+}

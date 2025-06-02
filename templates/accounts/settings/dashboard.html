@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings Dashboard - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="settings-title">
+                    <i class="bi bi-gear-fill"></i>
+                    Settings Dashboard
+                </h1>
+                <p class="settings-subtitle">Manage your preferences and account settings</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline-primary" onclick="exportSettings()">
+                    <i class="bi bi-download"></i>
+                    Export Settings
+                </button>
+                <button class="btn btn-primary" onclick="showQuickSettings()">
+                    <i class="bi bi-lightning-fill"></i>
+                    Quick Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Grid -->
+    <div class="settings-grid">
+        <!-- Appearance Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon appearance">
+                    <i class="bi bi-palette-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Appearance</h3>
+                    <p>Theme, colors, and visual preferences</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Current Theme:</span>
+                    <span class="preview-value">{{ user_settings.get_theme_display }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Color Scheme:</span>
+                    <span class="preview-value">{{ user_settings.get_color_scheme_display }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:appearance_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon notifications">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Notifications</h3>
+                    <p>Email, push, and alert preferences</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Email Notifications:</span>
+                    <span class="preview-value">{{ user_settings.email_notifications|yesno:"Enabled,Disabled" }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Frequency:</span>
+                    <span class="preview-value">{{ user_settings.get_notification_frequency_display }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:notification_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Grocery Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon grocery">
+                    <i class="bi bi-basket-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Grocery Settings</h3>
+                    <p>Currency, units, and tracking preferences</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Currency:</span>
+                    <span class="preview-value">{{ user_settings.get_default_currency_display }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Low Stock Threshold:</span>
+                    <span class="preview-value">{{ user_settings.low_stock_threshold }} items</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:grocery_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon privacy">
+                    <i class="bi bi-shield-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Privacy</h3>
+                    <p>Data sharing and visibility settings</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Profile Visibility:</span>
+                    <span class="preview-value">{{ user_settings.get_profile_visibility_display }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Data Sharing:</span>
+                    <span class="preview-value">{{ user_settings.data_sharing|yesno:"Enabled,Disabled" }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:privacy_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon security">
+                    <i class="bi bi-lock-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Security</h3>
+                    <p>Password, 2FA, and session settings</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Two-Factor Auth:</span>
+                    <span class="preview-value">{{ user_settings.two_factor_enabled|yesno:"Enabled,Disabled" }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Session Timeout:</span>
+                    <span class="preview-value">{{ user_settings.session_timeout }} minutes</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:security_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Language Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon language">
+                    <i class="bi bi-globe"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Language & Region</h3>
+                    <p>Language, timezone, and format settings</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Language:</span>
+                    <span class="preview-value">{{ user_settings.get_language_display }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Timezone:</span>
+                    <span class="preview-value">{{ user_settings.timezone }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:language_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Backup Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon backup">
+                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Backup & Sync</h3>
+                    <p>Data backup and synchronization</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Auto Backup:</span>
+                    <span class="preview-value">{{ user_settings.auto_backup|yesno:"Enabled,Disabled" }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Frequency:</span>
+                    <span class="preview-value">{{ user_settings.get_backup_frequency_display }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:backup_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <div class="card-icon advanced">
+                    <i class="bi bi-cpu-fill"></i>
+                </div>
+                <div class="card-info">
+                    <h3>Advanced</h3>
+                    <p>Developer options and beta features</p>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="setting-preview">
+                    <span class="preview-label">Developer Mode:</span>
+                    <span class="preview-value">{{ user_settings.developer_mode|yesno:"Enabled,Disabled" }}</span>
+                </div>
+                <div class="setting-preview">
+                    <span class="preview-label">Beta Features:</span>
+                    <span class="preview-value">{{ user_settings.beta_features|yesno:"Enabled,Disabled" }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accounts:advanced_settings' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_activities %}
+    <div class="recent-activity">
+        <h3>
+            <i class="bi bi-clock-history"></i>
+            Recent Settings Changes
+        </h3>
+        <div class="activity-list">
+            {% for activity in recent_activities %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">{{ activity.description }}</div>
+                    <div class="activity-time">{{ activity.timestamp|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Settings Modal -->
+<div class="modal fade" id="quickSettingsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-lightning-fill"></i>
+                    Quick Settings
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="quick-setting-item">
+                    <label>Theme</label>
+                    <select class="form-select" id="quickTheme">
+                        <option value="light" {% if user_settings.theme == 'light' %}selected{% endif %}>Light</option>
+                        <option value="dark" {% if user_settings.theme == 'dark' %}selected{% endif %}>Dark</option>
+                        <option value="auto" {% if user_settings.theme == 'auto' %}selected{% endif %}>Auto</option>
+                    </select>
+                </div>
+                <div class="quick-setting-item">
+                    <label>Notifications</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="quickNotifications" 
+                               {% if user_settings.email_notifications %}checked{% endif %}>
+                        <label class="form-check-label" for="quickNotifications">Enable notifications</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveQuickSettings()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/settings.js' %}"></script>
+{% endblock %}

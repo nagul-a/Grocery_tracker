@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Grocery Tracker</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS Variables -->
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --nav-text: #1f2937;
+            --nav-active: #3b82f6;
+            --dropdown-bg: rgba(255, 255, 255, 0.95);
+            --dropdown-border: rgba(59, 130, 246, 0.15);
+            --dropdown-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --dropdown-item-text: #6b7280;
+            --dropdown-item-text-hover: #1f2937;
+            --dropdown-item-active: #3b82f6;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --nav-bg: rgba(17, 24, 39, 0.95);
+            --nav-text: #f9fafb;
+            --nav-active: #60a5fa;
+            --dropdown-bg: rgba(31, 41, 55, 0.95);
+            --dropdown-border: rgba(96, 165, 250, 0.2);
+            --dropdown-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --dropdown-item-text: #d1d5db;
+            --dropdown-item-text-hover: #f9fafb;
+            --dropdown-item-active: #60a5fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+    </style>
+<style>
+    .auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 20px;
+        box-shadow: var(--dropdown-shadow);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 480px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 25px 30px -5px rgba(0, 0, 0, 0.12),
+            0 15px 15px -5px rgba(0, 0, 0, 0.06),
+            0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-logo {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--nav-active), #1d4ed8);
+        color: white;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin: 0 auto 1rem;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .auth-subtitle {
+        color: var(--dropdown-item-text);
+        font-size: 0.9375rem;
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--dropdown-border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--nav-text);
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--nav-active);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--dropdown-border);
+        border-radius: 4px;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-input:checked {
+        background: var(--nav-active);
+        border-color: var(--nav-active);
+    }
+
+    .form-check-label {
+        font-size: 0.875rem;
+        color: var(--dropdown-item-text);
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background: var(--dropdown-item-active);
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--dropdown-border);
+    }
+
+    .auth-link {
+        color: var(--nav-active);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: color 0.2s ease;
+    }
+
+    .auth-link:hover {
+        color: var(--dropdown-item-text-hover);
+        text-decoration: none;
+    }
+
+    .alert {
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        border: 1px solid;
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.2);
+        color: #16a34a;
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 1rem;
+        }
+        
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        width: 48px;
+        height: 48px;
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: var(--dropdown-shadow);
+        z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle i {
+        font-size: 1.25rem;
+        color: var(--nav-active);
+        transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .theme-toggle {
+            top: 1rem;
+            right: 1rem;
+            width: 44px;
+            height: 44px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="bi bi-basket2-fill"></i>
+            </div>
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-subtitle">Sign in to your Smart Grocery Tracker account</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.username.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.password.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-check">
+                {{ form.remember_me }}
+                <label for="{{ form.remember_me.id_for_label }}" class="form-check-label">
+                    Remember me for 2 weeks
+                </label>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Sign In
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p class="mb-2">
+                <a href="{% url 'accounts:password_reset' %}" class="auth-link">Forgot your password?</a>
+            </p>
+            <p class="mb-0">
+                Don't have an account? 
+                <a href="{% url 'accounts:register' %}" class="auth-link">Sign up here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+    <i class="bi bi-moon-fill" id="themeIcon"></i>
+</button>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Theme Toggle Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    // Get saved theme or default to light
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+        if (theme === 'dark') {
+            themeIcon.className = 'bi bi-sun-fill';
+        } else {
+            themeIcon.className = 'bi bi-moon-fill';
+        }
+    }
+});
+</script>
+
+</body>
+</html>

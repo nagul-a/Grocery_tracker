@@ -1,0 +1,544 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+        min-height: calc(100vh - 120px);
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .welcome-section {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--dropdown-shadow);
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .welcome-subtitle {
+        color: var(--dropdown-item-text);
+        font-size: 1.125rem;
+        margin-bottom: 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 18px;
+        padding: 1.5rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--dropdown-shadow);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 25px 30px -5px rgba(0, 0, 0, 0.12),
+            0 15px 15px -5px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--dropdown-item-active);
+        border-radius: 18px 18px 0 0;
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--dropdown-item-active);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--nav-text);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: var(--dropdown-item-text);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .content-card {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 18px;
+        padding: 1.5rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--dropdown-shadow);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--dropdown-border);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--nav-text);
+        margin: 0;
+    }
+
+    .card-action {
+        color: var(--nav-active);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .card-action:hover {
+        color: var(--dropdown-item-text-hover);
+        text-decoration: none;
+    }
+
+    .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .item-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--dropdown-border);
+    }
+
+    .item-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .item-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--nav-active);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .item-details h4 {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--nav-text);
+        margin: 0 0 0.25rem 0;
+    }
+
+    .item-details p {
+        font-size: 0.75rem;
+        color: var(--dropdown-item-text);
+        margin: 0;
+    }
+
+    .item-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--dropdown-border);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--dropdown-item-hover);
+        color: var(--nav-active);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .activity-content h4 {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--nav-text);
+        margin: 0 0 0.25rem 0;
+    }
+
+    .activity-content p {
+        font-size: 0.75rem;
+        color: var(--dropdown-item-text);
+        margin: 0;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 14px;
+        color: var(--nav-text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .quick-action-btn:hover {
+        background: var(--dropdown-item-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        text-decoration: none;
+        color: var(--nav-text-hover);
+    }
+
+    .quick-action-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--dropdown-item-active);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    /* Large Desktop (1400px+) */
+    @media (min-width: 1400px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .content-grid {
+            grid-template-columns: 2fr 1fr;
+            gap: 2.5rem;
+        }
+    }
+
+    /* Desktop (1200px - 1399px) */
+    @media (min-width: 1200px) and (max-width: 1399px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* Laptop (992px - 1199px) */
+    @media (min-width: 992px) and (max-width: 1199px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .content-grid {
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    /* Tablet (768px - 991px) */
+    @media (min-width: 768px) and (max-width: 991px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .dashboard-container {
+            padding: 1rem;
+        }
+    }
+
+    /* Mobile (max-width: 767px) */
+    @media (max-width: 767px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .dashboard-container {
+            padding: 1rem;
+        }
+
+        .welcome-section {
+            padding: 1.5rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome back, {{ profile.full_name }}!</h1>
+        <p class="welcome-subtitle">Here's your grocery management overview</p>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="bi bi-basket2-fill"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ dashboard_stats.total_items }}</div>
+            <div class="stat-label">Total Items</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ dashboard_stats.expiring_soon }}</div>
+            <div class="stat-label">Expiring Soon</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ dashboard_stats.low_stock }}</div>
+            <div class="stat-label">Low Stock</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="bi bi-currency-rupee"></i>
+                </div>
+            </div>
+            <div class="stat-value">₹{{ dashboard_stats.total_value|floatformat:0 }}</div>
+            <div class="stat-label">Total Value</div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Expiring Items -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">Items Expiring Soon</h2>
+                <a href="{% url 'home' %}?expiring=true" class="card-action">View All</a>
+            </div>
+            
+            {% if expiring_items %}
+                <ul class="item-list">
+                    {% for item in expiring_items %}
+                        <li class="item-list-item">
+                            <div class="item-info">
+                                <div class="item-icon">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div class="item-details">
+                                    <h4>{{ item.name }}</h4>
+                                    <p>{{ item.category }} • {{ item.quantity }} {{ item.unit }}</p>
+                                </div>
+                            </div>
+                            <span class="item-badge badge-warning">
+                                {{ item.days_until_expiry }} days
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No items expiring soon. Great job!</p>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">Recent Activity</h2>
+                <a href="{% url 'accounts:activity_log' %}" class="card-action">View All</a>
+            </div>
+            
+            {% if recent_activities %}
+                <div class="activity-list">
+                    {% for activity in recent_activities %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                {% if activity.action == 'item_added' %}
+                                    <i class="bi bi-plus"></i>
+                                {% elif activity.action == 'item_updated' %}
+                                    <i class="bi bi-pencil"></i>
+                                {% elif activity.action == 'item_deleted' %}
+                                    <i class="bi bi-trash"></i>
+                                {% else %}
+                                    <i class="bi bi-activity"></i>
+                                {% endif %}
+                            </div>
+                            <div class="activity-content">
+                                <h4>{{ activity.get_action_display }}</h4>
+                                <p>{{ activity.timestamp|timesince }} ago</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No recent activity.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="{% url 'add_item' %}" class="quick-action-btn">
+            <div class="quick-action-icon">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+            <span>Add New Item</span>
+        </a>
+        
+        <a href="{% url 'smart_suggestions' %}" class="quick-action-btn">
+            <div class="quick-action-icon">
+                <i class="bi bi-lightbulb"></i>
+            </div>
+            <span>Smart Suggestions</span>
+        </a>
+        
+        <a href="{% url 'meal_planner' %}" class="quick-action-btn">
+            <div class="quick-action-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <span>Meal Planner</span>
+        </a>
+        
+        <a href="{% url 'analytics' %}" class="quick-action-btn">
+            <div class="quick-action-icon">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <span>View Analytics</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

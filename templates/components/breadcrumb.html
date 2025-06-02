@@ -1,0 +1,28 @@
+<div class="breadcrumb-container">
+    <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+                <li class="breadcrumb-item {% if breadcrumb.active %}active{% endif %}">
+                    {% if breadcrumb.url and not breadcrumb.active %}
+                        <a href="{{ breadcrumb.url }}">
+                            {% if forloop.first %}
+                                <i class="bi bi-house-fill"></i>
+                            {% endif %}
+                            {{ breadcrumb.title }}
+                        </a>
+                    {% else %}
+                        {% if forloop.first %}
+                            <i class="bi bi-house-fill"></i>
+                        {% endif %}
+                        {{ breadcrumb.title }}
+                    {% endif %}
+                </li>
+                {% if not forloop.last %}
+                    <li class="breadcrumb-separator">
+                        <i class="bi bi-chevron-right"></i>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+</div>

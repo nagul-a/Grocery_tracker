@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Item - Smart Grocery Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-pencil me-2"></i>Edit Grocery Item
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="editItemForm">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Basic Information</h5>
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Item Name *</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       value="{{ item.name }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category }}"
+                                                {% if category == item.category %}selected{% endif %}>
+                                            {{ category }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label">Quantity *</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity"
+                                               min="0" value="{{ item.quantity }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="unit" class="form-label">Unit *</label>
+                                        <select class="form-select" id="unit" name="unit" required>
+                                            <option value="">Select unit</option>
+                                            {% for unit in units %}
+                                                <option value="{{ unit }}"
+                                                        {% if unit == item.unit %}selected{% endif %}>
+                                                    {{ unit }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" id="price" name="price"
+                                           step="0.01" min="0" value="{{ item.price|default:'' }}"
+                                           placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Additional Information</h5>
+
+                            <div class="mb-3">
+                                <label for="brand" class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand"
+                                       value="{{ item.brand|default:'' }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="store" class="form-label">Store</label>
+                                <input type="text" class="form-control" id="store" name="store"
+                                       value="{{ item.store|default:'' }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="expiry_date" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiry_date" name="expiry_date"
+                                       value="{% if item.expiry_date %}{{ item.expiry_date|date:'Y-m-d' }}{% endif %}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="last_purchased" class="form-label">Last Purchased</label>
+                                <input type="date" class="form-control" id="last_purchased" name="last_purchased"
+                                       value="{% if item.last_purchased %}{{ item.last_purchased|date:'Y-m-d' }}{% endif %}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="3">{{ item.notes|default:'' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item Status Information -->
+                    <div class="border-top pt-3 mt-3">
+                        <h6>Item Status</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>Created:</strong>
+                                    {{ item.created_at|date:"M d, Y g:i A" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Last Updated:</strong>
+                                    {{ item.updated_at|date:"M d, Y g:i A" }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                {% if item.expiry_date %}
+                                    <p class="mb-1">
+                                        <strong>Days until expiry:</strong>
+                                        <span id="daysUntilExpiry" class="badge"></span>
+                                    </p>
+                                {% endif %}
+
+                                <!-- Stock Level Indicator -->
+                                <p class="mb-1">
+                                    <strong>Stock Level:</strong>
+                                    <span id="stockLevel" class="badge"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="border-top pt-3 mt-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Cancel
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-danger me-2"
+                                        onclick="confirmDelete('{{ item.id }}', '{{ item.name }}')">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-1"></i>Update Item
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-outline-success w-100" onclick="quickRestock()">
+                            <i class="bi bi-plus-circle me-1"></i>Restock
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-outline-warning w-100" onclick="markAsUsed()">
+                            <i class="bi bi-dash-circle me-1"></i>Mark Used
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-outline-info w-100" onclick="duplicateItem()">
+                            <i class="bi bi-files me-1"></i>Duplicate
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="viewSimilar()">
+                            <i class="bi bi-search me-1"></i>Similar Items
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i>Confirm Delete
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" id="deleteForm" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Delete Item
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Calculate and display days until expiry
+    const expiryDate = '{{ item.expiry_date|date:"Y-m-d" }}';
+    if (expiryDate) {
+        updateExpiryStatus(expiryDate);
+    }
+
+    // Update stock level indicator
+    updateStockLevel({{ item.quantity }});
+
+    // Update expiry status when date changes
+    document.getElementById('expiry_date').addEventListener('change', function() {
+        if (this.value) {
+            updateExpiryStatus(this.value);
+        }
+    });
+
+    // Update stock level when quantity changes
+    document.getElementById('quantity').addEventListener('input', function() {
+        updateStockLevel(parseInt(this.value) || 0);
+    });
+});
+
+function updateExpiryStatus(expiryDate) {
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const diffTime = expiry - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const badge = document.getElementById('daysUntilExpiry');
+    if (badge) {
+        if (diffDays < 0) {
+            badge.className = 'badge bg-danger';
+            badge.textContent = `Expired ${Math.abs(diffDays)} days ago`;
+        } else if (diffDays === 0) {
+            badge.className = 'badge bg-danger';
+            badge.textContent = 'Expires today';
+        } else if (diffDays <= 3) {
+            badge.className = 'badge bg-warning text-dark';
+            badge.textContent = `${diffDays} days left`;
+        } else if (diffDays <= 7) {
+            badge.className = 'badge bg-info';
+            badge.textContent = `${diffDays} days left`;
+        } else {
+            badge.className = 'badge bg-success';
+            badge.textContent = `${diffDays} days left`;
+        }
+    }
+}
+
+function updateStockLevel(quantity) {
+    const badge = document.getElementById('stockLevel');
+    if (badge) {
+        if (quantity <= 0) {
+            badge.className = 'badge bg-danger';
+            badge.textContent = 'Out of stock';
+        } else if (quantity <= 5) {
+            badge.className = 'badge bg-warning text-dark';
+            badge.textContent = 'Low stock';
+        } else if (quantity <= 10) {
+            badge.className = 'badge bg-info';
+            badge.textContent = 'Medium stock';
+        } else {
+            badge.className = 'badge bg-success';
+            badge.textContent = 'Good stock';
+        }
+    }
+}
+
+function confirmDelete(itemId, itemName) {
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteForm').action = `/delete/${itemId}/`;
+
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+function quickRestock() {
+    const quantityInput = document.getElementById('quantity');
+    const currentQuantity = parseInt(quantityInput.value) || 0;
+    quantityInput.value = currentQuantity + 5; // Add 5 to current quantity
+    updateStockLevel(parseInt(quantityInput.value));
+}
+
+function markAsUsed() {
+    const quantityInput = document.getElementById('quantity');
+    const currentQuantity = parseInt(quantityInput.value) || 0;
+    if (currentQuantity > 0) {
+        quantityInput.value = Math.max(0, currentQuantity - 1);
+        updateStockLevel(parseInt(quantityInput.value));
+    }
+}
+
+function duplicateItem() {
+    // Redirect to add page with current item data as URL parameters
+    const name = document.getElementById('name').value;
+    const category = document.getElementById('category').value;
+    const unit = document.getElementById('unit').value;
+    const brand = document.getElementById('brand').value;
+
+    const params = new URLSearchParams({
+        name: name + ' (Copy)',
+        category: category,
+        unit: unit,
+        brand: brand,
+        quantity: 1
+    });
+
+    window.location.href = `/add/?${params.toString()}`;
+}
+
+function viewSimilar() {
+    const category = document.getElementById('category').value;
+    if (category) {
+        window.location.href = `/?category=${encodeURIComponent(category)}`;
+    }
+}
+</script>
+{% endblock %}

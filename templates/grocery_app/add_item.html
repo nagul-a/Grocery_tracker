@@ -1,0 +1,1198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add New Item - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Define missing CSS variables for light mode */
+:root {
+    --primary-gradient-start: #0d6efd;
+    --primary-gradient-end: #0a58ca;
+    --primary-rgb: 13, 110, 253;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-color: #dee2e6;
+    --text-color: #212529;
+    --hover-bg: #f8f9fa;
+    --input-bg: #ffffff;
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+}
+
+[data-theme="dark"] {
+    --primary-gradient-start: #4dabf7;
+    --primary-gradient-end: #339af0;
+    --primary-rgb: 77, 171, 247;
+    --card-bg: #161b22;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --border-color: #30363d;
+    --text-color: #f0f6fc;
+    --hover-bg: #21262d;
+    --input-bg: #0d1117;
+    --primary-color: #4dabf7;
+    --secondary-color: #868e96;
+}
+
+.page-header {
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0.5rem 0 0 0;
+    position: relative;
+    z-index: 1;
+}
+
+.form-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.form-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 50px var(--shadow-color);
+}
+
+.form-card-header {
+    background: linear-gradient(135deg, var(--card-bg), var(--hover-bg));
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.form-card-subtitle {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    font-size: 0.95rem;
+}
+
+.form-section {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 20px var(--shadow-color);
+}
+
+.form-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 1rem 0;
+}
+
+.form-group-enhanced {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-enhanced {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-control-enhanced {
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.form-control-enhanced:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+    transform: translateY(-1px);
+}
+
+.input-group-enhanced {
+    position: relative;
+}
+
+
+
+.suggestions-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.suggestion-item-enhanced {
+    background: var(--hover-bg);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.suggestion-item-enhanced:hover {
+    transform: translateX(5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 20px var(--shadow-color);
+}
+
+.btn-enhanced {
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary-enhanced {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.btn-primary-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4);
+}
+
+.btn-outline-enhanced {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-outline-enhanced:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-buttons {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .form-card-header {
+        padding: 1.5rem;
+    }
+
+    .form-section {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <h1 class="page-title">
+                    <i class="bi bi-plus-circle-fill me-3"></i>Add New Grocery Item
+                </h1>
+                <p class="page-subtitle">Add items to your grocery list with smart suggestions</p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{% url 'home' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Form -->
+        <div class="col-xl-8">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h3 class="form-card-title">
+                        <i class="bi bi-info-circle-fill me-2"></i>Item Details
+                    </h3>
+                    <p class="form-card-subtitle">Enter the details of your grocery item</p>
+                </div>
+                <div class="p-4">
+                    <form method="POST" id="addItemForm">
+                        {% csrf_token %}
+
+                        <!-- Basic Information Section -->
+                        <div class="form-section mb-4">
+                            <h4 class="form-section-title">
+                                <i class="bi bi-tag-fill me-2"></i>Basic Information
+                            </h4>
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-group-enhanced">
+                                        <label for="name" class="form-label-enhanced">
+                                            <i class="bi bi-basket-fill"></i>Item Name *
+                                        </label>
+                                        <div class="input-group-enhanced">
+                                            <input type="text" class="form-control form-control-enhanced"
+                                                   id="name" name="name"
+                                                   value="{{ request.GET.name|default:'' }}"
+                                                   placeholder="Enter item name..." required>
+                                        </div>
+                                        <small class="text-muted">Enter the name of the grocery item</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="category" class="form-label-enhanced">
+                                            <i class="bi bi-grid-fill"></i>Category *
+                                        </label>
+                                        <select class="form-select form-control-enhanced" id="category" name="category" required>
+                                            <option value="">Select a category</option>
+                                            {% for category in categories %}
+                                                <option value="{{ category }}"
+                                                        {% if category == request.GET.category %}selected{% endif %}>
+                                                    {{ category }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group-enhanced">
+                                        <label for="quantity" class="form-label-enhanced">
+                                            <i class="bi bi-123"></i>Quantity *
+                                        </label>
+                                        <input type="number" class="form-control form-control-enhanced"
+                                               id="quantity" name="quantity" min="1"
+                                               value="{{ request.GET.quantity|default:'1' }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group-enhanced">
+                                        <label for="unit" class="form-label-enhanced">
+                                            <i class="bi bi-rulers"></i>Unit *
+                                        </label>
+                                        <select class="form-select form-control-enhanced" id="unit" name="unit" required>
+                                            <option value="">Select unit</option>
+                                            {% for unit in units %}
+                                                <option value="{{ unit }}"
+                                                        {% if unit == request.GET.unit %}selected{% endif %}>
+                                                    {{ unit }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="price" class="form-label-enhanced">
+                                            <i class="bi bi-currency-rupee"></i>Price (Optional)
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control form-control-enhanced"
+                                                   id="price" name="price" step="0.01" min="0"
+                                                   placeholder="0.00">
+                                        </div>
+                                        <small class="text-muted">Enter the price per unit</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!-- Additional Information Section -->
+                        <div class="form-section mb-4">
+                            <h4 class="form-section-title">
+                                <i class="bi bi-info-square-fill me-2"></i>Additional Information
+                            </h4>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="brand" class="form-label-enhanced">
+                                            <i class="bi bi-award-fill"></i>Brand
+                                        </label>
+                                        <input type="text" class="form-control form-control-enhanced"
+                                               id="brand" name="brand"
+                                               placeholder="e.g., Organic Valley">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="store" class="form-label-enhanced">
+                                            <i class="bi bi-shop"></i>Store
+                                        </label>
+                                        <input type="text" class="form-control form-control-enhanced"
+                                               id="store" name="store"
+                                               placeholder="e.g., Whole Foods">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="expiry_date" class="form-label-enhanced">
+                                            <i class="bi bi-calendar-x-fill"></i>Expiry Date
+                                        </label>
+                                        <input type="date" class="form-control form-control-enhanced"
+                                               id="expiry_date" name="expiry_date">
+                                        <small class="text-muted">When does this item expire?</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group-enhanced">
+                                        <label for="last_purchased" class="form-label-enhanced">
+                                            <i class="bi bi-calendar-check-fill"></i>Last Purchased
+                                        </label>
+                                        <input type="date" class="form-control form-control-enhanced"
+                                               id="last_purchased" name="last_purchased">
+                                        <small class="text-muted">When did you last buy this item?</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group-enhanced">
+                                        <label for="notes" class="form-label-enhanced">
+                                            <i class="bi bi-journal-text"></i>Notes
+                                        </label>
+                                        <textarea class="form-control form-control-enhanced"
+                                                  id="notes" name="notes" rows="4"
+                                                  placeholder="Any additional notes about this item..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                <a href="{% url 'home' %}" class="btn btn-outline-enhanced btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>Cancel
+                                </a>
+                                <div class="d-flex gap-3">
+
+                                    <button type="submit" class="btn btn-primary-enhanced btn-lg">
+                                        <i class="bi bi-check-circle-fill me-2"></i>Add Item
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Suggestions Sidebar -->
+        <div class="col-xl-4">
+            <div class="suggestions-card">
+                <div class="form-card-header">
+                    <h3 class="form-card-title">
+                        <i class="bi bi-lightbulb-fill me-2"></i>Smart Suggestions
+                    </h3>
+                    <p class="form-card-subtitle">AI-powered recommendations based on your history</p>
+                </div>
+                <div class="p-4">
+                    <div id="smartSuggestions">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading suggestions...</span>
+                            </div>
+                            <p class="text-muted">Loading smart suggestions...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="suggestions-card mt-4">
+                <div class="form-card-header">
+                    <h3 class="form-card-title">
+                        <i class="bi bi-lightning-fill me-2"></i>Quick Actions
+                    </h3>
+                    <p class="form-card-subtitle">Shortcuts to speed up your workflow</p>
+                </div>
+                <div class="p-4">
+                    <div class="d-grid gap-3">
+
+                        <button type="button" class="btn btn-outline-enhanced" onclick="scanBarcode()">
+                            <i class="bi bi-upc-scan me-2"></i>Scan Barcode
+                        </button>
+                        <button type="button" class="btn btn-outline-enhanced" onclick="addFromTemplate()">
+                            <i class="bi bi-clipboard-plus me-2"></i>Use Template
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-enhanced">
+                            <i class="bi bi-list-ul me-2"></i>View All Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="suggestions-card mt-4">
+                <div class="form-card-header">
+                    <h3 class="form-card-title">
+                        <i class="bi bi-info-circle-fill me-2"></i>Pro Tips
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="tips-list">
+
+                        <div class="tip-item mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-lightbulb-fill text-warning me-2 mt-1"></i>
+                                <div>
+                                    <strong>Smart Categories</strong>
+                                    <p class="text-muted small mb-0">Categories are auto-suggested based on item names</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-calendar-fill text-success me-2 mt-1"></i>
+                                <div>
+                                    <strong>Expiry Tracking</strong>
+                                    <p class="text-muted small mb-0">Set expiry dates to get timely reminders</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize enhanced form functionality
+    initializeEnhancedForm();
+
+    // Enable smart form features
+    enableSmartForm();
+
+    // Load smart suggestions
+    loadSmartSuggestions();
+
+
+
+    // Set minimum date for expiry date to today
+    const expiryDateInput = document.getElementById('expiry_date');
+    const today = new Date().toISOString().split('T')[0];
+    expiryDateInput.setAttribute('min', today);
+
+    // Set default last purchased date to today
+    const lastPurchasedInput = document.getElementById('last_purchased');
+    lastPurchasedInput.value = today;
+
+    // Remove any voice buttons that might be added dynamically
+    removeVoiceButtons();
+});
+
+// Function to remove any voice buttons (simplified)
+function removeVoiceButtons() {
+    // Remove any existing voice buttons
+    const voiceButtons = document.querySelectorAll('.voice-btn, [class*="voice"], button[onclick*="voice"], button[onclick*="Voice"]');
+    voiceButtons.forEach(button => {
+        if (button.textContent.includes('Voice') || button.textContent.includes('voice') || button.innerHTML.includes('bi-mic')) {
+            button.remove();
+        }
+    });
+}
+
+function initializeEnhancedForm() {
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn-enhanced').forEach(button => {
+        button.addEventListener('click', createRipple);
+    });
+
+    // Enhanced form validation
+    const form = document.getElementById('addItemForm');
+    form.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Adding Item...';
+        submitBtn.disabled = true;
+
+        // Re-enable after a delay (in case of errors)
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 5000);
+    });
+
+    // Auto-suggest category based on item name
+    const nameInput = document.getElementById('name');
+    const categorySelect = document.getElementById('category');
+
+    nameInput.addEventListener('input', function() {
+        const itemName = this.value.toLowerCase();
+        const suggestedCategory = suggestCategory(itemName);
+        if (suggestedCategory && categorySelect.value === '') {
+            categorySelect.value = suggestedCategory;
+            // Add visual feedback
+            categorySelect.style.borderColor = 'var(--success-color)';
+            setTimeout(() => {
+                categorySelect.style.borderColor = '';
+            }, 2000);
+        }
+    });
+}
+
+function createRipple(event) {
+    const button = event.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add('ripple');
+
+    const ripple = button.getElementsByClassName('ripple')[0];
+    if (ripple) {
+        ripple.remove();
+    }
+
+    button.appendChild(circle);
+}
+
+function suggestCategory(itemName) {
+    const categoryMap = {
+        'apple': 'Fruits & Vegetables',
+        'banana': 'Fruits & Vegetables',
+        'orange': 'Fruits & Vegetables',
+        'tomato': 'Fruits & Vegetables',
+        'potato': 'Fruits & Vegetables',
+        'onion': 'Fruits & Vegetables',
+        'carrot': 'Fruits & Vegetables',
+        'lettuce': 'Fruits & Vegetables',
+        'spinach': 'Fruits & Vegetables',
+        'broccoli': 'Fruits & Vegetables',
+        'milk': 'Dairy & Eggs',
+        'cheese': 'Dairy & Eggs',
+        'butter': 'Dairy & Eggs',
+        'yogurt': 'Dairy & Eggs',
+        'eggs': 'Dairy & Eggs',
+        'chicken': 'Meat & Seafood',
+        'beef': 'Meat & Seafood',
+        'pork': 'Meat & Seafood',
+        'fish': 'Meat & Seafood',
+        'salmon': 'Meat & Seafood',
+        'bread': 'Bakery',
+        'bagel': 'Bakery',
+        'muffin': 'Bakery',
+        'rice': 'Pantry Staples',
+        'pasta': 'Pantry Staples',
+        'flour': 'Pantry Staples',
+        'sugar': 'Pantry Staples',
+        'salt': 'Pantry Staples',
+        'oil': 'Pantry Staples'
+    };
+
+    for (const [keyword, category] of Object.entries(categoryMap)) {
+        if (itemName.includes(keyword)) {
+            return category;
+        }
+    }
+    return null;
+}
+
+function validateForm() {
+    const requiredFields = ['name', 'category', 'quantity', 'unit'];
+    let isValid = true;
+
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+            field.style.borderColor = 'var(--danger-color)';
+            isValid = false;
+
+            // Reset border color after 3 seconds
+            setTimeout(() => {
+                field.style.borderColor = '';
+            }, 3000);
+        }
+    });
+
+    if (!isValid) {
+        showNotification('Please fill in all required fields', 'error');
+    }
+
+    return isValid;
+}
+
+function loadSmartSuggestions() {
+    fetch('/api/suggestions/')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('smartSuggestions');
+            if (data.suggestions && data.suggestions.length > 0) {
+                container.innerHTML = '';
+                data.suggestions.forEach(suggestion => {
+                    const suggestionElement = createSuggestionElement(suggestion);
+                    container.appendChild(suggestionElement);
+                });
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-lightbulb display-4 text-muted mb-3"></i>
+                        <p class="text-muted">No suggestions available yet.</p>
+                        <small class="text-muted">Add more items to get personalized suggestions!</small>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading suggestions:', error);
+            document.getElementById('smartSuggestions').innerHTML = `
+                <div class="text-center py-4">
+                    <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+                    <p class="text-muted">Unable to load suggestions at this time.</p>
+                </div>
+            `;
+        });
+}
+
+function createSuggestionElement(suggestion) {
+    const div = document.createElement('div');
+    div.className = 'suggestion-item-enhanced';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1">
+                <h6 class="mb-1 fw-bold">${suggestion.name}</h6>
+                <small class="text-muted">${suggestion.reason}</small>
+                <div class="mt-1">
+                    <span class="badge bg-primary">${suggestion.category}</span>
+                    <span class="badge bg-secondary ms-1">${suggestion.suggested_quantity} ${suggestion.unit}</span>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-enhanced btn-sm ms-3"
+                    onclick="applySuggestion('${suggestion.name}', '${suggestion.category}', ${suggestion.suggested_quantity}, '${suggestion.unit}')">
+                <i class="bi bi-plus-circle me-1"></i>Add
+            </button>
+        </div>
+    `;
+    return div;
+}
+
+function applySuggestion(name, category, quantity, unit) {
+    document.getElementById('name').value = name;
+    document.getElementById('category').value = category;
+    document.getElementById('quantity').value = quantity;
+    document.getElementById('unit').value = unit;
+
+    // Visual feedback
+    showNotification(`Applied suggestion: ${name}`, 'success');
+
+    // Scroll to form
+    document.getElementById('addItemForm').scrollIntoView({ behavior: 'smooth' });
+
+    // Focus on the name field
+    document.getElementById('name').focus();
+}
+
+
+
+
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Quick action functions
+function scanBarcode() {
+    // Simulate barcode scanning
+    const modal = new bootstrap.Modal(document.createElement('div'));
+    const modalElement = document.createElement('div');
+    modalElement.className = 'modal fade';
+    modalElement.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-upc-scan me-2"></i>Barcode Scanner
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <div class="scanner-animation mb-4">
+                        <i class="bi bi-upc-scan display-1 text-primary"></i>
+                        <div class="scanner-line"></div>
+                    </div>
+                    <h4>Scanning for barcode...</h4>
+                    <p class="text-muted">Point your camera at a product barcode</p>
+                    <div class="mt-4">
+                        <button class="btn btn-primary-enhanced" onclick="simulateBarcodeScan()">
+                            <i class="bi bi-check-circle me-2"></i>Simulate Scan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modalElement);
+    const barcodeModal = new bootstrap.Modal(modalElement);
+    barcodeModal.show();
+
+    // Clean up when modal is hidden
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        document.body.removeChild(modalElement);
+    });
+}
+
+function simulateBarcodeScan() {
+    // Simulate finding a product
+    const mockProducts = [
+        { name: 'Organic Bananas', category: 'Fruits & Vegetables', unit: 'bunch', price: 2.99 },
+        { name: 'Whole Milk', category: 'Dairy & Eggs', unit: 'gallon', price: 3.49 },
+        { name: 'Bread Loaf', category: 'Bakery', unit: 'loaf', price: 2.79 },
+        { name: 'Chicken Breast', category: 'Meat & Seafood', unit: 'lb', price: 5.99 }
+    ];
+
+    const product = mockProducts[Math.floor(Math.random() * mockProducts.length)];
+
+    // Fill form with scanned product data
+    document.getElementById('name').value = product.name;
+    document.getElementById('category').value = product.category;
+    document.getElementById('unit').value = product.unit;
+    document.getElementById('price').value = product.price;
+    document.getElementById('quantity').value = 1;
+
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.querySelector('.modal.show'));
+    if (modal) modal.hide();
+
+    showNotification(`Scanned: ${product.name}`, 'success');
+}
+
+function addFromTemplate() {
+    const templates = [
+        {
+            name: 'Weekly Essentials',
+            items: [
+                { name: 'Milk', category: 'Dairy & Eggs', quantity: 1, unit: 'gallon' },
+                { name: 'Bread', category: 'Bakery', quantity: 1, unit: 'loaf' },
+                { name: 'Eggs', category: 'Dairy & Eggs', quantity: 1, unit: 'dozen' },
+                { name: 'Bananas', category: 'Fruits & Vegetables', quantity: 1, unit: 'bunch' }
+            ]
+        },
+        {
+            name: 'Breakfast Items',
+            items: [
+                { name: 'Cereal', category: 'Pantry Staples', quantity: 1, unit: 'box' },
+                { name: 'Orange Juice', category: 'Beverages', quantity: 1, unit: 'bottle' },
+                { name: 'Yogurt', category: 'Dairy & Eggs', quantity: 6, unit: 'cups' }
+            ]
+        },
+        {
+            name: 'Cooking Basics',
+            items: [
+                { name: 'Olive Oil', category: 'Pantry Staples', quantity: 1, unit: 'bottle' },
+                { name: 'Salt', category: 'Pantry Staples', quantity: 1, unit: 'container' },
+                { name: 'Black Pepper', category: 'Pantry Staples', quantity: 1, unit: 'container' },
+                { name: 'Garlic', category: 'Fruits & Vegetables', quantity: 1, unit: 'bulb' }
+            ]
+        }
+    ];
+
+    // Create template selection modal
+    const modalElement = document.createElement('div');
+    modalElement.className = 'modal fade';
+    modalElement.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-clipboard-plus me-2"></i>Choose Template
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        ${templates.map((template, index) => `
+                            <div class="col-md-4">
+                                <div class="template-card" onclick="applyTemplate(${index})" style="cursor: pointer; border: 2px solid var(--border-color); border-radius: 15px; padding: 1rem; transition: all 0.3s ease;">
+                                    <h6 class="fw-bold">${template.name}</h6>
+                                    <small class="text-muted">${template.items.length} items</small>
+                                    <div class="mt-2">
+                                        ${template.items.slice(0, 3).map(item => `
+                                            <div class="small text-muted">• ${item.name}</div>
+                                        `).join('')}
+                                        ${template.items.length > 3 ? '<div class="small text-muted">• ...</div>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modalElement);
+    const templateModal = new bootstrap.Modal(modalElement);
+    templateModal.show();
+
+    // Add hover effects
+    modalElement.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.borderColor = 'var(--primary-color)';
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 5px 20px var(--shadow-color)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'var(--border-color)';
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+
+    // Store templates globally for access
+    window.groceryTemplates = templates;
+
+    // Clean up when modal is hidden
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        document.body.removeChild(modalElement);
+        delete window.groceryTemplates;
+    });
+}
+
+function applyTemplate(templateIndex) {
+    const template = window.groceryTemplates[templateIndex];
+
+    // Close template modal
+    const modal = bootstrap.Modal.getInstance(document.querySelector('.modal.show'));
+    if (modal) modal.hide();
+
+    // Add all items from template
+    let addedCount = 0;
+    const totalItems = template.items.length;
+
+    template.items.forEach((item, index) => {
+        setTimeout(() => {
+            fetch('/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: new URLSearchParams({
+                    name: item.name,
+                    category: item.category,
+                    quantity: item.quantity,
+                    unit: item.unit,
+                    notes: `Added from ${template.name} template`
+                })
+            })
+            .then(response => {
+                addedCount++;
+                if (addedCount === totalItems) {
+                    showNotification(`Added ${totalItems} items from ${template.name} template!`, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding template item:', error);
+            });
+        }, index * 200); // Stagger the requests
+    });
+}
+
+// Enhanced form features
+function enableSmartForm() {
+    // Auto-complete for item names
+    const nameInput = document.getElementById('name');
+    let autocompleteTimeout;
+
+    nameInput.addEventListener('input', function() {
+        clearTimeout(autocompleteTimeout);
+        autocompleteTimeout = setTimeout(() => {
+            if (this.value.length >= 2) {
+                fetchItemSuggestions(this.value);
+            }
+        }, 300);
+    });
+
+    // Smart price estimation
+    const categorySelect = document.getElementById('category');
+    const priceInput = document.getElementById('price');
+
+    categorySelect.addEventListener('change', function() {
+        if (this.value && !priceInput.value) {
+            estimatePrice(nameInput.value, this.value);
+        }
+    });
+}
+
+function fetchItemSuggestions(query) {
+    fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.items.length > 0) {
+                showAutocompleteSuggestions(data.items.slice(0, 5));
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching suggestions:', error);
+        });
+}
+
+function showAutocompleteSuggestions(items) {
+    // Remove existing suggestions
+    const existingSuggestions = document.querySelector('.autocomplete-suggestions');
+    if (existingSuggestions) {
+        existingSuggestions.remove();
+    }
+
+    const nameInput = document.getElementById('name');
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'autocomplete-suggestions position-absolute';
+    suggestionsContainer.style.cssText = `
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+    `;
+
+    items.forEach(item => {
+        const suggestionElement = document.createElement('div');
+        suggestionElement.className = 'autocomplete-item p-2';
+        suggestionElement.style.cssText = `
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        `;
+        suggestionElement.innerHTML = `
+            <div class="fw-semibold">${item.name}</div>
+            <small class="text-muted">${item.category} • ${item.quantity} ${item.unit}</small>
+        `;
+
+        suggestionElement.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'var(--hover-bg)';
+        });
+
+        suggestionElement.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+
+        suggestionElement.addEventListener('click', function() {
+            nameInput.value = item.name;
+            document.getElementById('category').value = item.category;
+            document.getElementById('unit').value = item.unit;
+            if (item.price) {
+                document.getElementById('price').value = item.price;
+            }
+            suggestionsContainer.remove();
+        });
+
+        suggestionsContainer.appendChild(suggestionElement);
+    });
+
+    nameInput.parentNode.style.position = 'relative';
+    nameInput.parentNode.appendChild(suggestionsContainer);
+
+    // Remove suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!nameInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+            suggestionsContainer.remove();
+        }
+    }, { once: true });
+}
+
+function estimatePrice(itemName, category) {
+    // Simple price estimation based on category
+    const priceEstimates = {
+        'Fruits & Vegetables': 50.00,
+        'Dairy & Eggs': 80.00,
+        'Meat & Seafood': 200.00,
+        'Bakery': 60.00,
+        'Pantry Staples': 100.00,
+        'Frozen Foods': 120.00,
+        'Beverages': 40.00,
+        'Snacks': 80.00,
+        'Health & Beauty': 150.00,
+        'Household Items': 120.00,
+        'Other': 75.00
+    };
+
+    const estimatedPrice = priceEstimates[category] || 75.00;
+    const priceInput = document.getElementById('price');
+
+    // Add a subtle animation to show the estimated price
+    priceInput.style.backgroundColor = 'var(--success-color)';
+    priceInput.style.color = 'white';
+    priceInput.value = estimatedPrice.toFixed(2);
+
+    setTimeout(() => {
+        priceInput.style.backgroundColor = '';
+        priceInput.style.color = '';
+    }, 1500);
+
+    showNotification(`Estimated price: $${estimatedPrice.toFixed(2)}`, 'info');
+}
+
+// Utility functions
+function getCsrfToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfToken) {
+        return csrfToken.value;
+    }
+
+    // Fallback: get from cookie
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+            return value;
+        }
+    }
+
+    return '';
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);';
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="bi bi-${getNotificationIcon(type)} me-2"></i>
+            <span>${message}</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'success': return 'check-circle-fill';
+        case 'error': return 'exclamation-triangle-fill';
+        case 'warning': return 'exclamation-triangle-fill';
+        case 'info': return 'info-circle-fill';
+        default: return 'info-circle-fill';
+    }
+}
+</script>
+
+<style>
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+</style>
+{% endblock %}

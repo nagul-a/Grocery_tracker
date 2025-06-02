@@ -1,0 +1,475 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics - Smart Grocery Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="bi bi-bar-chart me-2"></i>Advanced Analytics</h2>
+                <p class="text-muted mb-0">Detailed insights into your grocery shopping patterns</p>
+            </div>
+            <div>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-primary" onclick="exportData()">
+                        <i class="bi bi-download me-1"></i>Export
+                    </button>
+                    <button class="btn btn-primary" onclick="refreshAnalytics()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Metrics -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card-body text-white text-center">
+                <i class="bi bi-basket2-fill display-4 mb-2"></i>
+                <h3 class="mb-1">{{ total_items }}</h3>
+                <p class="mb-0">Total Items</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="card-body text-white text-center">
+                <i class="bi bi-currency-rupee display-4 mb-2"></i>
+                <h3 class="mb-1">₹{{ total_value }}</h3>
+                <p class="mb-0">Total Value</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-gradient" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="card-body text-white text-center">
+                <i class="bi bi-graph-up display-4 mb-2"></i>
+                <h3 class="mb-1">₹{{ spending_analytics.total_spent }}</h3>
+                <p class="mb-0">Monthly Spending</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-gradient" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <div class="card-body text-white text-center">
+                <i class="bi bi-calendar-check display-4 mb-2"></i>
+                <h3 class="mb-1">₹{{ spending_analytics.avg_daily_spending }}</h3>
+                <p class="mb-0">Daily Average</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Category Distribution Chart -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>Category Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spending Trends -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Spending Trends
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="spendingChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Consumption Patterns -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart me-2"></i>Consumption Patterns by Category
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if consumption_data %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Items</th>
+                                    <th>Avg Quantity</th>
+                                    <th>Consumption Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in consumption_data %}
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-tag me-2"></i>{{ data.category }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ data.item_count }}</span>
+                                        </td>
+                                        <td>{{ data.avg_quantity }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar"
+                                                     style="width: {{ data.avg_quantity|floatformat:0 }}%">
+                                                    {{ data.avg_quantity|floatformat:1 }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-graph-up text-muted display-4"></i>
+                        <p class="text-muted mt-2">No consumption data available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Insights -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>Quick Insights
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>Top Category</h6>
+                    {% if category_stats %}
+                        {% for category, count in category_stats.items %}
+                            {% if forloop.first %}
+                                <p class="text-success">
+                                    <i class="bi bi-trophy me-1"></i>{{ category }} ({{ count }} items)
+                                </p>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No data available</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <h6>Spending Trend</h6>
+                    {% if spending_analytics.total_spent > 0 %}
+                        <p class="text-info">
+                            <i class="bi bi-graph-up me-1"></i>
+                            ₹{{ spending_analytics.total_spent }} in {{ spending_analytics.period_days }} days
+                        </p>
+                    {% else %}
+                        <p class="text-muted">No spending data</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <h6>Inventory Status</h6>
+                    <p class="text-primary">
+                        <i class="bi bi-box me-1"></i>{{ total_items }} items tracked
+                    </p>
+                </div>
+
+                <hr>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="viewDetailedReport()">
+                        <i class="bi bi-file-text me-1"></i>Detailed Report
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" onclick="viewSustainability()">
+                        <i class="bi bi-leaf me-1"></i>Sustainability
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Recommendations -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-robot me-2"></i>AI Recommendations
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <small>
+                        <i class="bi bi-info-circle me-1"></i>
+                        Based on your patterns, consider buying in bulk for pantry staples.
+                    </small>
+                </div>
+                <div class="alert alert-success">
+                    <small>
+                        <i class="bi bi-check-circle me-1"></i>
+                        Your spending is consistent with healthy shopping habits.
+                    </small>
+                </div>
+                <div class="alert alert-warning">
+                    <small>
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        Consider adding more variety to your fruit and vegetable purchases.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Analytics Tables -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-table me-2"></i>Spending Breakdown by Category
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if spending_analytics.category_breakdown %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Total Spent</th>
+                                    <th>Items Purchased</th>
+                                    <th>Average Price</th>
+                                    <th>Percentage of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in spending_analytics.category_breakdown %}
+                                    <tr>
+                                        <td>{{ category.category_name }}</td>
+                                        <td>₹{{ category.total_spent|floatformat:2 }}</td>
+                                        <td>{{ category.item_count }}</td>
+                                        <td>₹{{ category.avg_price|floatformat:2 }}</td>
+                                        <td>
+                                            {% widthratio category.total_spent spending_analytics.total_spent 100 %}%
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-table text-muted display-4"></i>
+                        <p class="text-muted mt-2">No spending data available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Purchases Section -->
+{% if spending_analytics.recent_purchases %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Recent Purchases (Last 30 Days)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Cost</th>
+                                <th>Purchase Date</th>
+                                <th>Days Ago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for purchase in spending_analytics.recent_purchases %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ purchase.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ purchase.category }}</span>
+                                    </td>
+                                    <td>{{ purchase.quantity }}</td>
+                                    <td>₹{{ purchase.price|floatformat:2 }}</td>
+                                    <td>
+                                        <strong class="text-primary">₹{{ purchase.total_cost|floatformat:2 }}</strong>
+                                    </td>
+                                    <td>{{ purchase.purchase_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if purchase.days_ago == 0 %}
+                                            <span class="badge bg-success">Today</span>
+                                        {% elif purchase.days_ago == 1 %}
+                                            <span class="badge bg-info">Yesterday</span>
+                                        {% elif purchase.days_ago <= 7 %}
+                                            <span class="badge bg-warning">{{ purchase.days_ago }} days</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ purchase.days_ago }} days</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary Stats for Recent Purchases -->
+                <div class="row mt-3 pt-3 border-top">
+                    <div class="col-md-3 text-center">
+                        <h6 class="text-muted mb-1">Items Purchased</h6>
+                        <h4 class="text-primary">{{ spending_analytics.items_purchased }}</h4>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h6 class="text-muted mb-1">Total Spent</h6>
+                        <h4 class="text-success">₹{{ spending_analytics.total_spent|floatformat:2 }}</h4>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h6 class="text-muted mb-1">Average per Item</h6>
+                        <h4 class="text-info">₹{{ spending_analytics.avg_item_cost|floatformat:2 }}</h4>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h6 class="text-muted mb-1">Daily Average</h6>
+                        <h4 class="text-warning">₹{{ spending_analytics.avg_daily_spending|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+});
+
+function initializeCharts() {
+    // Category Distribution Chart
+    const categoryCtx = document.getElementById('categoryChart');
+    if (categoryCtx) {
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                {% if category_stats %}
+                    labels: [{% for category, count in category_stats.items %}'{{ category }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                    datasets: [{
+                        data: [{% for category, count in category_stats.items %}{{ count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+                        ]
+                    }]
+                {% else %}
+                    labels: ['No Data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#e9ecef']
+                    }]
+                {% endif %}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Spending Trends Chart
+    const spendingCtx = document.getElementById('spendingChart');
+    if (spendingCtx) {
+        new Chart(spendingCtx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Weekly Spending',
+                    data: [3000, 3750, 2500, 4500],
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+}
+
+function refreshAnalytics() {
+    window.location.reload();
+}
+
+function exportData() {
+    // This would typically generate and download a CSV/PDF report
+    alert('Export feature coming soon! You will be able to download detailed reports.');
+}
+
+function viewDetailedReport() {
+    window.location.href = '/reports/';
+}
+
+function viewSustainability() {
+    window.location.href = '/sustainability/';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/essential-settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="essential-settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="bi bi-gear-fill"></i>
+            </div>
+            <div class="header-text">
+                <h1 class="settings-title">Settings</h1>
+                <p class="settings-subtitle">Manage your essential preferences</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="settings-form-container">
+        <form method="post" class="essential-settings-form">
+            {% csrf_token %}
+            
+            <!-- Theme Setting -->
+            <div class="setting-group">
+                <div class="setting-header">
+                    <div class="setting-icon theme-icon">
+                        <i class="bi bi-palette-fill"></i>
+                    </div>
+                    <div class="setting-info">
+                        <h3>{{ form.theme.label }}</h3>
+                        <p>Choose between light and dark mode</p>
+                    </div>
+                </div>
+                <div class="setting-control">
+                    {{ form.theme }}
+                    {% if form.theme.help_text %}
+                        <small class="form-text">{{ form.theme.help_text }}</small>
+                    {% endif %}
+                    {% if form.theme.errors %}
+                        <div class="invalid-feedback d-block">{{ form.theme.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Currency Setting -->
+            <div class="setting-group">
+                <div class="setting-header">
+                    <div class="setting-icon currency-icon">
+                        <i class="bi bi-currency-exchange"></i>
+                    </div>
+                    <div class="setting-info">
+                        <h3>{{ form.default_currency.label }}</h3>
+                        <p>Select your preferred currency for prices</p>
+                    </div>
+                </div>
+                <div class="setting-control">
+                    {{ form.default_currency }}
+                    {% if form.default_currency.help_text %}
+                        <small class="form-text">{{ form.default_currency.help_text }}</small>
+                    {% endif %}
+                    {% if form.default_currency.errors %}
+                        <div class="invalid-feedback d-block">{{ form.default_currency.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Low Stock Threshold -->
+            <div class="setting-group">
+                <div class="setting-header">
+                    <div class="setting-icon stock-icon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div class="setting-info">
+                        <h3>{{ form.low_stock_threshold.label }}</h3>
+                        <p>Get alerts when items fall below this quantity</p>
+                    </div>
+                </div>
+                <div class="setting-control">
+                    <div class="number-input-wrapper">
+                        {{ form.low_stock_threshold }}
+                        <span class="input-suffix">items</span>
+                    </div>
+                    {% if form.low_stock_threshold.help_text %}
+                        <small class="form-text">{{ form.low_stock_threshold.help_text }}</small>
+                    {% endif %}
+                    {% if form.low_stock_threshold.errors %}
+                        <div class="invalid-feedback d-block">{{ form.low_stock_threshold.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Expiry Warning Days -->
+            <div class="setting-group">
+                <div class="setting-header">
+                    <div class="setting-icon expiry-icon">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <div class="setting-info">
+                        <h3>{{ form.expiry_warning_days.label }}</h3>
+                        <p>Days before expiry to show warnings</p>
+                    </div>
+                </div>
+                <div class="setting-control">
+                    <div class="number-input-wrapper">
+                        {{ form.expiry_warning_days }}
+                        <span class="input-suffix">days</span>
+                    </div>
+                    {% if form.expiry_warning_days.help_text %}
+                        <small class="form-text">{{ form.expiry_warning_days.help_text }}</small>
+                    {% endif %}
+                    {% if form.expiry_warning_days.errors %}
+                        <div class="invalid-feedback d-block">{{ form.expiry_warning_days.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Email Notifications -->
+            <div class="setting-group">
+                <div class="setting-header">
+                    <div class="setting-icon notification-icon">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div class="setting-info">
+                        <h3>{{ form.email_notifications.label }}</h3>
+                        <p>Receive email notifications for important updates</p>
+                    </div>
+                </div>
+                <div class="setting-control">
+                    <div class="toggle-switch">
+                        {{ form.email_notifications }}
+                        <label for="{{ form.email_notifications.id_for_label }}" class="toggle-label">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% if form.email_notifications.help_text %}
+                        <small class="form-text">{{ form.email_notifications.help_text }}</small>
+                    {% endif %}
+                    {% if form.email_notifications.errors %}
+                        <div class="invalid-feedback d-block">{{ form.email_notifications.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary btn-save">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Save Settings
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-reset" onclick="resetForm()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Reset
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Current Settings Preview -->
+    <div class="settings-preview">
+        <h3>
+            <i class="bi bi-eye-fill"></i>
+            Current Settings
+        </h3>
+        <div class="preview-grid">
+            <div class="preview-item">
+                <span class="preview-label">Theme:</span>
+                <span class="preview-value">{{ settings.get_theme_display }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Currency:</span>
+                <span class="preview-value">{{ settings.get_default_currency_display }}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Low Stock Alert:</span>
+                <span class="preview-value">{{ settings.low_stock_threshold }} items</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Expiry Warning:</span>
+                <span class="preview-value">{{ settings.expiry_warning_days }} days</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Email Notifications:</span>
+                <span class="preview-value">{{ settings.email_notifications|yesno:"Enabled,Disabled" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_activities %}
+    <div class="recent-activity">
+        <h3>
+            <i class="bi bi-clock-history"></i>
+            Recent Changes
+        </h3>
+        <div class="activity-list">
+            {% for activity in recent_activities %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">{{ activity.description }}</div>
+                    <div class="activity-time">{{ activity.timestamp|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetForm() {
+    if (confirm('Are you sure you want to reset all settings to their default values?')) {
+        document.querySelector('.essential-settings-form').reset();
+    }
+}
+
+// Auto-save theme changes
+document.getElementById('theme-select').addEventListener('change', function() {
+    const theme = this.value;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    // Show save indicator
+    const saveBtn = document.querySelector('.btn-save');
+    saveBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Theme Updated - Save to Confirm';
+    saveBtn.classList.add('btn-warning');
+    
+    setTimeout(() => {
+        saveBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Save Settings';
+        saveBtn.classList.remove('btn-warning');
+    }, 3000);
+});
+
+// Form validation
+document.querySelector('.essential-settings-form').addEventListener('submit', function(e) {
+    const stockThreshold = document.getElementById('stock-threshold').value;
+    const expiryDays = document.getElementById('expiry-days').value;
+    
+    if (stockThreshold < 1 || stockThreshold > 50) {
+        e.preventDefault();
+        alert('Low stock threshold must be between 1 and 50 items.');
+        return;
+    }
+    
+    if (expiryDays < 1 || expiryDays > 14) {
+        e.preventDefault();
+        alert('Expiry warning days must be between 1 and 14 days.');
+        return;
+    }
+});
+</script>
+{% endblock %}

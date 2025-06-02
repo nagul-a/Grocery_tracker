@@ -1,0 +1,527 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+        min-height: calc(100vh - 120px);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .profile-subtitle {
+        color: var(--dropdown-item-text);
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .profile-card {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--dropdown-shadow);
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--dropdown-border);
+    }
+
+    .current-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--nav-border);
+        margin-bottom: 1rem;
+    }
+
+    .avatar-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--nav-active), #1d4ed8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1rem;
+        border: 4px solid var(--nav-border);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--nav-text);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--dropdown-border);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--nav-text);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--dropdown-border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--nav-text);
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--nav-active);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--dropdown-border);
+        border-radius: 4px;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-input:checked {
+        background: var(--nav-active);
+        border-color: var(--nav-active);
+    }
+
+    .form-check-label {
+        font-size: 0.875rem;
+        color: var(--nav-text);
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .help-text {
+        font-size: 0.8125rem;
+        color: var(--dropdown-item-text);
+        margin-top: 0.25rem;
+        opacity: 0.8;
+    }
+
+    .error-text {
+        color: #dc2626;
+        font-size: 0.8125rem;
+        margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+        background: var(--dropdown-item-active);
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        padding: 0.875rem 2rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--nav-border);
+        border-radius: 14px;
+        color: var(--nav-text);
+        font-weight: 500;
+        font-size: 0.9375rem;
+        padding: 0.875rem 2rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: var(--nav-text-hover);
+    }
+
+    .btn-warning {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-weight: 500;
+        font-size: 0.9375rem;
+        padding: 0.875rem 1.5rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-warning:hover {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        text-decoration: none;
+        color: white;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--dropdown-border);
+    }
+
+    .stats-section {
+        background: var(--dropdown-bg);
+        border: 1px solid var(--dropdown-border);
+        border-radius: 18px;
+        padding: 1.5rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--dropdown-shadow);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--nav-active);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8125rem;
+        color: var(--dropdown-item-text);
+        font-weight: 500;
+    }
+
+    .alert {
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        border: 1px solid;
+    }
+
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.2);
+        color: #16a34a;
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #dc2626;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .button-group {
+            flex-direction: column;
+        }
+        
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .profile-container {
+            padding: 1rem;
+        }
+        
+        .profile-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Breadcrumb Navigation -->
+    {% breadcrumb "Profile Settings" "Dashboard" "accounts:user_dashboard" %}
+
+    <div class="profile-header">
+        <h1 class="profile-title">Profile Settings</h1>
+        <p class="profile-subtitle">Manage your account information and preferences</p>
+    </div>
+
+    <!-- Profile Completion Progress -->
+    {% profile_completion_percentage user as completion_percentage %}
+    {% if completion_percentage < 100 %}
+        <div class="profile-progress">
+            <div class="progress-header">
+                <h4 class="progress-title">Profile Completion</h4>
+                <span class="progress-percentage">{{ completion_percentage }}%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ completion_percentage }}%"></div>
+            </div>
+            <div class="progress-items">
+                {% profile_completion_items user as incomplete_items %}
+                {% for item in incomplete_items %}
+                    <div class="progress-item">
+                        <i class="bi bi-circle"></i>
+                        <span>{{ item }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="profile-card">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <!-- Profile Picture Section -->
+            <div class="profile-avatar-section">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="current-avatar">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                    {{ form.profile_picture }}
+                    {% if form.profile_picture.help_text %}
+                        <div class="help-text">{{ form.profile_picture.help_text }}</div>
+                    {% endif %}
+                    {% if form.profile_picture.errors %}
+                        <div class="error-text">
+                            {% for error in form.profile_picture.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h3 class="section-title">Personal Information</h3>
+                
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.help_text %}
+                        <div class="help-text">{{ form.phone_number.help_text }}</div>
+                    {% endif %}
+                    {% if form.phone_number.errors %}
+                        <div class="error-text">
+                            {% for error in form.phone_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="form-section">
+                <h3 class="section-title">Preferences</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.preferred_theme.id_for_label }}" class="form-label">Theme</label>
+                        {{ form.preferred_theme }}
+                        {% if form.preferred_theme.errors %}
+                            <div class="error-text">
+                                {% for error in form.preferred_theme.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.default_grocery_category.id_for_label }}" class="form-label">Default Category</label>
+                        {{ form.default_grocery_category }}
+                        {% if form.default_grocery_category.errors %}
+                            <div class="error-text">
+                                {% for error in form.default_grocery_category.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.expiry_reminder_days.id_for_label }}" class="form-label">Expiry Reminder (Days)</label>
+                        {{ form.expiry_reminder_days }}
+                        {% if form.expiry_reminder_days.help_text %}
+                            <div class="help-text">{{ form.expiry_reminder_days.help_text }}</div>
+                        {% endif %}
+                        {% if form.expiry_reminder_days.errors %}
+                            <div class="error-text">
+                                {% for error in form.expiry_reminder_days.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.items_per_page.id_for_label }}" class="form-label">Items Per Page</label>
+                        {{ form.items_per_page }}
+                        {% if form.items_per_page.help_text %}
+                            <div class="help-text">{{ form.items_per_page.help_text }}</div>
+                        {% endif %}
+                        {% if form.items_per_page.errors %}
+                            <div class="error-text">
+                                {% for error in form.items_per_page.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="form-section">
+                <h3 class="section-title">Notification Settings</h3>
+                
+                <div class="form-check">
+                    {{ form.email_notifications }}
+                    <label for="{{ form.email_notifications.id_for_label }}" class="form-check-label">
+                        Email Notifications
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    {{ form.low_stock_notifications }}
+                    <label for="{{ form.low_stock_notifications.id_for_label }}" class="form-check-label">
+                        Low Stock Notifications
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="{% url 'accounts:password_change' %}" class="btn-warning">
+                    <i class="bi bi-key"></i>
+                    <span>Change Password</span>
+                </a>
+                <a href="{% url 'accounts:user_dashboard' %}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="stats-section">
+        <h3 class="section-title">Account Statistics</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">{{ user_stats.total_items|default:0 }}</div>
+                <div class="stat-label">Total Items</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_stats.total_activities|default:0 }}</div>
+                <div class="stat-label">Activities</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_stats.shared_lists|default:0 }}</div>
+                <div class="stat-label">Shared Lists</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

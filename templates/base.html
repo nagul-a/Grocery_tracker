@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}Smart Grocery Tracker{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% load static %}
+    <!-- Clean Modern CSS -->
+    <link rel="stylesheet" href="{% static 'css/clean-modern.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+    <link rel="stylesheet" href="{% static 'css/smooth-navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/enhanced-auth.css' %}">
+
+    <!-- Theme Detection Script -->
+    <script>
+        // Apply theme immediately to prevent flash
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Smooth Animated Navbar -->
+    <nav class="smooth-navbar">
+        <div class="navbar-container">
+            <!-- Brand Section -->
+            <a href="{% url 'home' %}" class="navbar-brand">
+                <div class="brand-icon">
+                    <i class="bi bi-basket2-fill"></i>
+                </div>
+                <span>Smart Grocery Tracker</span>
+            </a>
+
+            <!-- Navigation Menu -->
+            <div class="navbar-nav">
+                <ul class="nav-list">
+                    <!-- Sliding Underline -->
+                    <div class="nav-underline"></div>
+
+                    <!-- Navigation Items -->
+                    <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link">
+                            <i class="bi bi-house-door nav-icon"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}" class="nav-link">
+                            <i class="bi bi-speedometer2 nav-icon"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{% url 'add_item' %}" class="nav-link">
+                            <i class="bi bi-plus-circle nav-icon"></i>
+                            <span>Add Item</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{% url 'grocery_list_mongodb' %}" class="nav-link">
+                            <i class="bi bi-server nav-icon"></i>
+                            <span>MongoDB List</span>
+                        </a>
+                    </li>
+
+                    <!-- AI Features Dropdown -->
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="bi bi-robot nav-icon"></i>
+                            <span>AI Features</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">AI-Powered Tools</div>
+                            <a href="{% url 'smart_suggestions' %}" class="dropdown-item">
+                                <i class="bi bi-lightbulb-fill"></i>
+                                <span>Smart Suggestions</span>
+                            </a>
+                            <a href="{% url 'meal_planner' %}" class="dropdown-item">
+                                <i class="bi bi-calendar-check-fill"></i>
+                                <span>Meal Planner</span>
+                            </a>
+                            <a href="{% url 'price_comparison' %}" class="dropdown-item">
+                                <i class="bi bi-currency-rupee"></i>
+                                <span>Price Comparison</span>
+                            </a>
+                        </div>
+                    </li>
+
+                    <!-- Analytics Dropdown -->
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="bi bi-graph-up nav-icon"></i>
+                            <span>Analytics</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Data & Insights</div>
+                            <a href="{% url 'analytics' %}" class="dropdown-item">
+                                <i class="bi bi-bar-chart-fill"></i>
+                                <span>Analytics Dashboard</span>
+                            </a>
+                            <a href="{% url 'reports' %}" class="dropdown-item">
+                                <i class="bi bi-file-earmark-text-fill"></i>
+                                <span>Reports</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'sustainability' %}" class="dropdown-item">
+                                <i class="bi bi-leaf-fill"></i>
+                                <span>Sustainability</span>
+                            </a>
+                        </div>
+                    </li>
+
+                    <!-- Settings Navigation Item -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'accounts:essential_settings' %}" class="nav-link"
+                               aria-label="Essential Settings" title="Settings & Preferences">
+                                <i class="bi bi-gear-fill nav-icon"></i>
+                                <span class="nav-text">Settings</span>
+                            </a>
+                        </li>
+
+                        <!-- Profile Navigation Item -->
+                        <li class="nav-item">
+                            <a href="{% url 'accounts:comprehensive_profile' %}" class="nav-link"
+                               aria-label="User Profile" title="Profile & Account Information">
+                                <i class="bi bi-person-circle nav-icon"></i>
+                                <span class="nav-text">Profile</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <!-- Mobile Logout Item (only visible on mobile) -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item mobile-logout-item">
+                            <a href="#" class="nav-link logout-mobile-link" onclick="showLogoutModal(event)">
+                                <i class="bi bi-box-arrow-right nav-icon"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="navbar-actions">
+                <!-- Search -->
+                <div class="search-container">
+                    <form method="GET" action="{% url 'home' %}">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" name="search" class="search-input"
+                               placeholder="Search items..." value="{{ search_query }}">
+                    </form>
+                </div>
+
+                <!-- Quick Settings -->
+                {% if user.is_authenticated %}
+                    <div class="quick-settings">
+                        <button class="quick-setting-btn" id="quickThemeToggle" title="Toggle Theme">
+                            <i class="bi bi-moon-fill" id="quickThemeIcon"></i>
+                        </button>
+                        <button class="quick-setting-btn" id="notificationToggle" title="Toggle Notifications">
+                            <i class="bi bi-bell-fill"></i>
+                        </button>
+                    </div>
+                {% endif %}
+
+                <!-- Stats -->
+                <div class="stats-container">
+                    <div class="stat-badge warning" title="Items Expiring Soon">
+                        <i class="bi bi-clock-fill"></i>
+                        <span>{{ expiring_count|default:0 }}</span>
+                    </div>
+                    <div class="stat-badge danger" title="Low Stock Items">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span>{{ low_stock_count|default:0 }}</span>
+                    </div>
+                </div>
+
+                <!-- User Authentication -->
+                <div class="user-auth-section">
+                    {% if user.is_authenticated %}
+                        <!-- User Profile Dropdown -->
+                        <div class="nav-dropdown user-dropdown">
+                            <a href="#" class="nav-link dropdown-toggle user-profile-btn">
+                                {% if user.userprofile.profile_picture %}
+                                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile" class="profile-avatar">
+                                {% else %}
+                                    <div class="profile-avatar-placeholder">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                {% endif %}
+                                <span class="user-name">{{ user.first_name|default:user.username }}</span>
+                            </a>
+                            <div class="dropdown-menu user-dropdown-menu">
+                                <!-- Enhanced User Header -->
+                                <div class="dropdown-header enhanced-header">
+                                    <div class="user-avatar-large">
+                                        {% if user.userprofile.profile_picture %}
+                                            <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile">
+                                        {% else %}
+                                            <div class="avatar-placeholder-large">
+                                                {{ user.first_name|first|default:user.username|first|upper }}{{ user.last_name|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-details">
+                                        <div class="user-name-large">{{ user.get_full_name|default:user.username }}</div>
+                                        <div class="user-email">{{ user.email }}</div>
+                                        <div class="user-status">
+                                            <span class="status-indicator online"></span>
+                                            <span class="status-text">Online</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Stats -->
+                                <div class="dropdown-stats">
+                                    <div class="stat-item">
+                                        <i class="bi bi-basket2-fill"></i>
+                                        <div class="stat-content">
+                                            <span class="stat-number">{{ total_items_count|default:0 }}</span>
+                                            <span class="stat-label">Total Items</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-item warning">
+                                        <i class="bi bi-clock-fill"></i>
+                                        <div class="stat-content">
+                                            <span class="stat-number">{{ expiring_count|default:0 }}</span>
+                                            <span class="stat-label">Expiring</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-item danger">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <div class="stat-content">
+                                            <span class="stat-number">{{ low_stock_count|default:0 }}</span>
+                                            <span class="stat-label">Low Stock</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Navigation Items -->
+                                <a href="{% url 'accounts:user_dashboard' %}" class="dropdown-item enhanced-item">
+                                    <div class="item-icon">
+                                        <i class="bi bi-speedometer2"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Dashboard</span>
+                                        <span class="item-subtitle">Overview & Analytics</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+
+                                <a href="{% url 'accounts:comprehensive_profile' %}" class="dropdown-item enhanced-item">
+                                    <div class="item-icon">
+                                        <i class="bi bi-person-circle"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Profile</span>
+                                        <span class="item-subtitle">Account & Information</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+
+                                <a href="{% url 'accounts:password_change' %}" class="dropdown-item enhanced-item">
+                                    <div class="item-icon">
+                                        <i class="bi bi-key"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Change Password</span>
+                                        <span class="item-subtitle">Security Settings</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+
+                                <a href="{% url 'accounts:essential_settings' %}" class="dropdown-item enhanced-item">
+                                    <div class="item-icon">
+                                        <i class="bi bi-gear"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Settings</span>
+                                        <span class="item-subtitle">Essential Preferences</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+
+                                <a href="{% url 'accounts:activity_log' %}" class="dropdown-item enhanced-item">
+                                    <div class="item-icon">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Activity Log</span>
+                                        <span class="item-subtitle">Recent Actions</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Theme Toggle -->
+                                <div class="dropdown-item enhanced-item theme-toggle-item" onclick="toggleThemeFromDropdown()">
+                                    <div class="item-icon">
+                                        <i class="bi bi-moon-fill" id="dropdownThemeIcon"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title" id="dropdownThemeText">Dark Mode</span>
+                                        <span class="item-subtitle">Switch Theme</span>
+                                    </div>
+                                    <div class="theme-switch">
+                                        <input type="checkbox" id="dropdownThemeSwitch" class="theme-switch-input">
+                                        <label for="dropdownThemeSwitch" class="theme-switch-label"></label>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Enhanced Logout Button -->
+                                <a href="#" class="dropdown-item enhanced-item logout-item" onclick="showLogoutModal(event)">
+                                    <div class="item-icon logout-icon">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <span class="item-title">Sign Out</span>
+                                        <span class="item-subtitle">End Session</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right item-arrow"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Login/Register Buttons -->
+                        <div class="auth-buttons">
+                            <a href="{% url 'accounts:login' %}" class="btn-auth btn-login">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                <span>Sign In</span>
+                            </a>
+                            <a href="{% url 'accounts:register' %}" class="btn-auth btn-register">
+                                <i class="bi bi-person-plus"></i>
+                                <span>Sign Up</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="mobile-toggle" id="mobileToggle">
+                <div class="toggle-line"></div>
+                <div class="toggle-line"></div>
+                <div class="toggle-line"></div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Enhanced Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-icon logout-icon">
+                    <i class="bi bi-box-arrow-right"></i>
+                </div>
+                <h3 class="modal-title">Confirm Logout</h3>
+                <p class="modal-subtitle">Are you sure you want to sign out of your account?</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">You will be redirected to the home page and will need to sign in again to access your grocery data.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="hideLogoutModal()">
+                    <i class="bi bi-x-circle"></i>
+                    <span>Cancel</span>
+                </button>
+                <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Sign Out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Timeout Warning Modal -->
+    <div id="sessionTimeoutModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-icon warning-icon">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+                <h3 class="modal-title">Session Expiring Soon</h3>
+                <p class="modal-subtitle">Your session will expire in <span id="timeoutCountdown">5</span> minutes</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Would you like to extend your session or sign out now?</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-danger" onclick="confirmLogout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out Now</span>
+                </button>
+                <button type="button" class="btn-primary" onclick="extendSession()">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Extend Session</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-3" style="min-height: calc(100vh - 140px);">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="row">
+                <div class="col-12">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h5><i class="bi bi-basket2-fill me-2"></i>Smart Grocery Tracker</h5>
+                    <p class="mb-0">AI-powered grocery management for modern households</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Smooth Navbar JavaScript -->
+    <script src="{% static 'js/smooth-navbar.js' %}"></script>
+    <!-- Enhanced Authentication JavaScript -->
+    <script src="{% static 'js/enhanced-auth.js' %}"></script>
+    <!-- Clean Modern JavaScript -->
+    <script src="{% static 'js/clean-app.js' %}"></script>
+
+    <!-- Clean Theme Script -->
+    <script>
+        // Theme is handled by clean-app.js
+        console.log('✅ Clean theme system loaded');
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - Smart Grocery Tracker{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/comprehensive-profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="comprehensive-profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar-container">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-avatar">
+                    {% else %}
+                        <div class="profile-avatar-placeholder">
+                            <span class="avatar-initials">{{ profile.get_initials }}</span>
+                        </div>
+                    {% endif %}
+                    <div class="avatar-upload-overlay" onclick="document.getElementById('profile-picture-input').click()">
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-info-section">
+                <h1 class="profile-name">{{ profile.full_name }}</h1>
+                <p class="profile-email">{{ user.email }}</p>
+                <div class="profile-meta">
+                    <div class="meta-item">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Joined {{ user.date_joined|date:"F Y" }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="bi bi-clock-history"></i>
+                        <span>{{ user_stats.account_age_days }} days ago</span>
+                    </div>
+                </div>
+                <div class="profile-completion">
+                    <div class="completion-label">Profile Completion</div>
+                    <div class="completion-bar">
+                        <div class="completion-progress" style="width: {{ user_stats.profile_completion }}%"></div>
+                    </div>
+                    <div class="completion-percentage">{{ user_stats.profile_completion }}%</div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button type="button" class="btn btn-outline-danger logout-btn" onclick="showLogoutModal(event)">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content Grid -->
+    <div class="profile-content-grid">
+        <!-- User Statistics Card -->
+        <div class="profile-card stats-card">
+            <div class="card-header">
+                <h3>
+                    <i class="bi bi-graph-up"></i>
+                    Your Statistics
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon total-items">
+                            <i class="bi bi-basket2-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ user_stats.total_items }}</div>
+                            <div class="stat-label">Total Items</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon items-month">
+                            <i class="bi bi-plus-circle-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ user_stats.items_this_month }}</div>
+                            <div class="stat-label">This Month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon low-stock">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ user_stats.low_stock_items }}</div>
+                            <div class="stat-label">Low Stock</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon expiring">
+                            <i class="bi bi-clock-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ user_stats.expiring_soon }}</div>
+                            <div class="stat-label">Expiring Soon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Settings Summary -->
+        <div class="profile-card settings-summary-card">
+            <div class="card-header">
+                <h3>
+                    <i class="bi bi-gear-fill"></i>
+                    Account Settings
+                </h3>
+                <a href="{% url 'accounts:essential_settings' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil"></i>
+                    Edit
+                </a>
+            </div>
+            <div class="card-content">
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-icon theme-icon">
+                            <i class="bi bi-palette-fill"></i>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-label">Theme</div>
+                            <div class="setting-value">{{ settings_summary.theme }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-icon currency-icon">
+                            <i class="bi bi-currency-exchange"></i>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-label">Currency</div>
+                            <div class="setting-value">{{ settings_summary.currency }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-icon notification-icon">
+                            <i class="bi bi-bell-fill"></i>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-label">Email Notifications</div>
+                            <div class="setting-value">{{ settings_summary.email_notifications|yesno:"Enabled,Disabled" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-icon stock-icon">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-label">Low Stock Alert</div>
+                            <div class="setting-value">{{ settings_summary.low_stock_threshold }} items</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Edit Form -->
+        <div class="profile-card edit-form-card">
+            <div class="card-header">
+                <h3>
+                    <i class="bi bi-person-gear"></i>
+                    Edit Profile
+                </h3>
+            </div>
+            <div class="card-content">
+                <form method="post" enctype="multipart/form-data" class="profile-edit-form">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h4>Basic Information</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.help_text %}
+                                <small class="form-text">{{ form.phone_number.help_text }}</small>
+                            {% endif %}
+                            {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">{{ form.phone_number.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Profile Picture -->
+                    <div class="form-section">
+                        <h4>Profile Picture</h4>
+                        <div class="form-group">
+                            <label for="{{ form.profile_picture.id_for_label }}">{{ form.profile_picture.label }}</label>
+                            {{ form.profile_picture }}
+                            {% if form.profile_picture.help_text %}
+                                <small class="form-text">{{ form.profile_picture.help_text }}</small>
+                            {% endif %}
+                            {% if form.profile_picture.errors %}
+                                <div class="invalid-feedback d-block">{{ form.profile_picture.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Preferences -->
+                    <div class="form-section">
+                        <h4>Preferences</h4>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.preferred_theme.id_for_label }}">{{ form.preferred_theme.label }}</label>
+                            {{ form.preferred_theme }}
+                            {% if form.preferred_theme.errors %}
+                                <div class="invalid-feedback d-block">{{ form.preferred_theme.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.expiry_reminder_days.id_for_label }}">{{ form.expiry_reminder_days.label }}</label>
+                            {{ form.expiry_reminder_days }}
+                            {% if form.expiry_reminder_days.help_text %}
+                                <small class="form-text">{{ form.expiry_reminder_days.help_text }}</small>
+                            {% endif %}
+                            {% if form.expiry_reminder_days.errors %}
+                                <div class="invalid-feedback d-block">{{ form.expiry_reminder_days.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="form-section">
+                        <h4>Notifications</h4>
+                        
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                {{ form.email_notifications }}
+                                <label for="{{ form.email_notifications.id_for_label }}" class="form-check-label">
+                                    {{ form.email_notifications.label }}
+                                </label>
+                            </div>
+                            
+                            <div class="form-check">
+                                {{ form.low_stock_notifications }}
+                                <label for="{{ form.low_stock_notifications.id_for_label }}" class="form-check-label">
+                                    {{ form.low_stock_notifications.label }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Save Changes
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        {% if recent_activities %}
+        <div class="profile-card activity-card">
+            <div class="card-header">
+                <h3>
+                    <i class="bi bi-clock-history"></i>
+                    Recent Activity
+                </h3>
+                <a href="{% url 'accounts:activity_log' %}" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+            </div>
+            <div class="card-content">
+                <div class="activity-list">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if activity.action == 'login' %}
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            {% elif activity.action == 'profile_updated' %}
+                                <i class="bi bi-person-gear"></i>
+                            {% elif activity.action == 'settings_updated' %}
+                                <i class="bi bi-gear"></i>
+                            {% else %}
+                                <i class="bi bi-activity"></i>
+                            {% endif %}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.description }}</div>
+                            <div class="activity-time">{{ activity.timestamp|timesince }} ago</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetForm() {
+    if (confirm('Are you sure you want to reset all changes?')) {
+        document.querySelector('.profile-edit-form').reset();
+    }
+}
+
+// Profile picture preview
+document.getElementById('profile-picture-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatar = document.querySelector('.profile-avatar');
+            const placeholder = document.querySelector('.profile-avatar-placeholder');
+            
+            if (avatar) {
+                avatar.src = e.target.result;
+            } else if (placeholder) {
+                placeholder.innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="profile-avatar">`;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form validation
+document.querySelector('.profile-edit-form').addEventListener('submit', function(e) {
+    const email = document.querySelector('input[name="email"]').value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('Please enter a valid email address.');
+        return;
+    }
+});
+</script>
+{% endblock %}

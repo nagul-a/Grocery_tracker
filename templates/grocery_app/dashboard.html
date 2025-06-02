@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Smart Grocery Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="bi bi-graph-up me-2"></i>Dashboard</h2>
+                <p class="text-muted mb-0">Overview of your grocery inventory and insights</p>
+            </div>
+            <div>
+                <a href="{% url 'analytics' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-bar-chart me-1"></i>Detailed Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards Row -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-basket2-fill display-4 mb-2"></i>
+                <h3 class="mb-1">{{ total_items }}</h3>
+                <p class="mb-0">Total Items</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <i class="bi bi-clock-fill display-4 mb-2"></i>
+                <h3 class="mb-1">{{ expiring_count }}</h3>
+                <p class="mb-0">Expiring Soon</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle-fill display-4 mb-2"></i>
+                <h3 class="mb-1">{{ low_stock_count }}</h3>
+                <p class="mb-0">Low Stock</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-rupee display-4 mb-2"></i>
+                <h3 class="mb-1">₹{{ total_value }}</h3>
+                <p class="mb-0">Total Value</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Expiring Items -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock text-warning me-2"></i>Items Expiring Soon
+                </h5>
+                <span class="badge bg-warning text-dark">{{ expiring_count }}</span>
+            </div>
+            <div class="card-body">
+                {% if expiring_items %}
+                    <div class="list-group list-group-flush">
+                        {% for item in expiring_items|slice:":5" %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <h6 class="mb-1">{{ item.name }}</h6>
+                                    <small class="text-muted">{{ item.category }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning text-dark">
+                                        {{ item.expiry_date|date:"M d" }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">{{ item.quantity }} {{ item.unit }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if expiring_items|length > 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'home' %}?expiring=true" class="btn btn-sm btn-outline-warning">
+                                View All {{ expiring_items|length }} Items
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle text-success display-4"></i>
+                        <p class="text-muted mt-2">No items expiring soon!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Items -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i>Low Stock Items
+                </h5>
+                <span class="badge bg-danger">{{ low_stock_count }}</span>
+            </div>
+            <div class="card-body">
+                {% if low_stock_items %}
+                    <div class="list-group list-group-flush">
+                        {% for item in low_stock_items|slice:":5" %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <h6 class="mb-1">{{ item.name }}</h6>
+                                    <small class="text-muted">{{ item.category }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-danger">
+                                        {{ item.quantity }} {{ item.unit }}
+                                    </span>
+                                    <br>
+                                    <a href="/edit/{{ item.id }}/" class="btn btn-sm btn-outline-primary">
+                                        Restock
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if low_stock_items|length > 5 %}
+                        <div class="text-center mt-3">
+                            <small class="text-muted">And {{ low_stock_items|length|add:"-5" }} more items</small>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle text-success display-4"></i>
+                        <p class="text-muted mt-2">All items well stocked!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <!-- Category Distribution -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>Category Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spending Overview -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Monthly Spending
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if spending_analytics %}
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <h4 class="text-primary">₹{{ spending_analytics.total_spent }}</h4>
+                            <small class="text-muted">Total Spent</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-success">₹{{ spending_analytics.avg_daily_spending }}</h4>
+                            <small class="text-muted">Daily Average</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-info">{{ spending_analytics.period_days }}</h4>
+                            <small class="text-muted">Days</small>
+                        </div>
+                    </div>
+
+                    {% if spending_analytics.category_breakdown %}
+                        <h6>Spending by Category</h6>
+                        {% for category in spending_analytics.category_breakdown %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>{{ category.category_name }}</span>
+                                <div>
+                                    <span class="badge bg-primary">₹{{ category.total_spent|floatformat:2 }}</span>
+                                    <small class="text-muted">({{ category.item_count }} items)</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-graph-up text-muted display-4"></i>
+                        <p class="text-muted mt-2">No spending data available yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'add_item' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-circle me-2"></i>Add Item
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'smart_suggestions' %}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-lightbulb me-2"></i>Smart Suggestions
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'meal_planner' %}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-calendar-check me-2"></i>Meal Planner
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category Distribution Chart
+    const categoryCtx = document.getElementById('categoryChart');
+    if (categoryCtx) {
+        const categoryData = {
+            {% if category_stats %}
+                labels: [{% for category, count in category_stats.items %}'{{ category }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                datasets: [{
+                    data: [{% for category, count in category_stats.items %}{{ count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                    backgroundColor: [
+                        '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6c757d',
+                        '#fd7e14', '#20c997', '#6f42c1', '#d63384', '#495057'
+                    ]
+                }]
+            {% else %}
+                labels: ['No Data'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e9ecef']
+                }]
+            {% endif %}
+        };
+
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: categoryData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
